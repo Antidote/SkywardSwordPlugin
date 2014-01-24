@@ -13,7 +13,7 @@ CONFIG += plugin
 TRANSLATIONS += \
     lang/en_ES.ts
 
-DESTDIR = $$OUT_PWD/../plugins
+DESTDIR = $$OUT_PWD/../../build/plugins
 UI_DIR = ui
 
 DEFINES += SKYWARDSWORDPLUGGIN_LIBRARY
