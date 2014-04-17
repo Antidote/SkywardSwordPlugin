@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT    += core gui network
+QT    += core gui network xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = skywardswordplugin
@@ -17,19 +17,6 @@ DESTDIR = $$OUT_PWD/../../build/plugins
 UI_DIR = ui
 
 DEFINES += SKYWARDSWORDPLUGGIN_LIBRARY
-
-SOURCES += \
-    src/SkywardSwordPlugin.cpp \
-    src/SkywardSwordEditorForm.cpp \
-    src/SkywardSwordGameFile.cpp \
-    src/SettingsManager.cpp \
-    src/SettingsDialog.cpp \
-    src/PlaytimeWidget.cpp \
-    src/Common.cpp \
-    src/TriforceWidget.cpp \
-    src/CopyWidget.cpp \
-    src/SkywardSwordTabWidget.cpp \
-    src/UpdateDialog.cpp
 
 INCLUDEPATH += \
     include \
@@ -64,6 +51,21 @@ CONFIG(debug, debug|release){
     MOC_DIR = moc/debug
 }
 
+SOURCES += \
+    src/SkywardSwordPlugin.cpp \
+    src/SkywardSwordEditorForm.cpp \
+    src/SkywardSwordGameFile.cpp \
+    src/SettingsManager.cpp \
+    src/SettingsDialog.cpp \
+    src/PlaytimeWidget.cpp \
+    src/Common.cpp \
+    src/TriforceWidget.cpp \
+    src/CopyWidget.cpp \
+    src/SkywardSwordTabWidget.cpp \
+    src/UpdateDialog.cpp \
+    src/SkipDatabaseWidget.cpp \
+    src/SkipDatabaseElementEditor.cpp
+
 HEADERS +=\
     include/SkywardSwordPlugin.hpp \
     include/skywardswordplugin_global.hpp \
@@ -77,7 +79,9 @@ HEADERS +=\
     include/TriforceWidget.hpp \
     include/CopyWidget.hpp \
     include/SkywardSwordTabWidget.hpp \
-    include/UpdateDialog.hpp
+    include/UpdateDialog.hpp \
+    include/SkipDatabaseWidget.hpp \
+    include/SkipDatabaseElementEditor.hpp
 
 RESOURCES += \
     resources/resources.qrc
@@ -90,7 +94,8 @@ FORMS += \
     ui/SettingsDialog.ui \
     ui/PlaytimeWidget.ui \
     ui/CopyWidget.ui \
-    ui/SkywardSwordTabWidget.ui \
-    ui/UpdateDialog.ui
+    ui/UpdateDialog.ui \
+    ui/SkipDatabaseWidget.ui \
+    ui/SkipDatabaseElementEditor.ui
 
 win32:RC_FILE += resources/resource.rc

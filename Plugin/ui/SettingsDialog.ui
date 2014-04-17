@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>201</height>
+    <height>215</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Settings...</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -29,7 +29,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="settingsTab">
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <property name="iconSize">
       <size>
@@ -216,7 +216,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="updateTab">
       <attribute name="icon">
        <iconset resource="../resources/resources.qrc">
         <normaloff>:/Bags/BombBagLarge</normaloff>:/Bags/BombBagLarge</iconset>
@@ -226,7 +226,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_8">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="reagionGrpBox">
+        <widget class="QGroupBox" name="updateGroup">
          <property name="title">
           <string>Update Settings</string>
          </property>
@@ -272,6 +272,14 @@
        </item>
       </layout>
      </widget>
+     <widget class="SkipDatabaseWidget" name="skipDatabaseTab">
+      <attribute name="icon">
+       <iconset theme="media-skip-forward"/>
+      </attribute>
+      <attribute name="title">
+       <string>Skip Database</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
    <item row="3" column="1">
@@ -292,6 +300,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SkipDatabaseWidget</class>
+   <extends>QWidget</extends>
+   <header>SkipDatabaseWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources/resources.qrc"/>
  </resources>

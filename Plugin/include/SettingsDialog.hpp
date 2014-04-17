@@ -18,6 +18,7 @@
 
 #include <QDialog>
 #include <PluginSettingsDialog.hpp>
+#include "Common.hpp"
 
 namespace Ui {
 class SettingsDialog;
@@ -32,8 +33,13 @@ public:
     ~SettingsDialog();
 
     QWidget* centralWidget() const;
+    QList<SkipElement> skipDatabase() const;
+    void reloadSkipDatabase();
     void restoreOwnership();
     void loadSettings();
+signals:
+    void skipDatabaseChanged();
+
 public slots:
     void accept();
     void onTextChanged(QString text);

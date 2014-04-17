@@ -42,6 +42,7 @@ SkywardSwordPlugin::SkywardSwordPlugin()
 {
     m_actionNewDocument->setIcon(m_icon);
     m_instance = this;
+    connect(&m_fsWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));
 }
 
 SkywardSwordPlugin::~SkywardSwordPlugin()
@@ -57,6 +58,8 @@ void SkywardSwordPlugin::initialize(MainWindowBase *mainWindow)
 {
     m_mainWindow = mainWindow;
     m_mainWindow->newDocumentMenu()->addAction(m_actionNewDocument);
+    QDir().mkdir(QString(m_mainWindow->homePath().absolutePath() + QDir::separator() + name()));
+    m_fsWatcher.addPath(QString(m_mainWindow->homePath().absolutePath() + QDir::separator() + name() + QDir::separator() + "skipdb.xml"));
     connect(m_actionNewDocument, SIGNAL(triggered()), this, SLOT(onNewDocument()));
 
     m_settingsDialog = new SettingsDialog((QWidget*)m_mainWindow->mainWindow());
@@ -86,7 +89,7 @@ QString SkywardSwordPlugin::name() const
 
 QString SkywardSwordPlugin::author() const
 {
-    return "Phillip \"Antidote\" Stephens";
+    return "Phillip \"Antidote\" Stephens 1324";
 }
 
 QString SkywardSwordPlugin::version() const
@@ -318,6 +321,13 @@ void SkywardSwordPlugin::onNoUpdate()
 {
     ((QWidget*)parent())->setEnabled(true);
     m_updateMBox.hide();
+}
+
+void SkywardSwordPlugin::onFileChanged(QString file)
+{
+    m_fsWatcher.removePath(file);
+    qobject_cast<SettingsDialog*>(settingsDialog())->reloadSkipDatabase();
+    m_fsWatcher.addPath(file);
 }
 
 #if QT_VERSION < 0x050000

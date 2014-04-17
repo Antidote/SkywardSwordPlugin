@@ -46,7 +46,6 @@ public:
     void saveSettings();
     static SettingsManager* instance();
 signals:
-    
 public slots:
 
 private:

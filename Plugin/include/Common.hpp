@@ -17,6 +17,7 @@
 #define COMMON_HPP
 
 #include <QDateTime>
+#include <QPoint>
 
 struct Playtime
 {
@@ -40,9 +41,21 @@ struct Vector3
     {}
 };
 
+struct SkipElement
+{
+    QString objectName;
+    QString text;
+    quint32 offset;
+    quint32 bit;
+    bool    visible;
+};
+
 const quint64 SECONDS_TO_2000 = 946684800LL;
 const quint64 TICKS_PER_SECOND = 60750000LL;
 
+
+void saveWidgetGeom(QWidget* target, QString key);
+void restoreWidgetGeom(QWidget* target, QString key);
 quint64 wiiTime();
 quint64 toWiiTime(QDateTime time);
 QDateTime fromWiiTime(quint64 wiiTime);

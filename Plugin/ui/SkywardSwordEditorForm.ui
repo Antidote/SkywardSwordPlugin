@@ -16,19 +16,60 @@
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_18">
-   <item row="1" column="5">
-    <widget class="QLabel" name="checksumValueLbl">
-     <property name="font">
-      <font>
-       <family>Courier New</family>
-      </font>
-     </property>
+   <item row="1" column="7">
+    <widget class="QLabel" name="checksumLbl">
      <property name="text">
-      <string notr="true">Checksum</string>
+      <string>Checksum:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="6">
+   <item row="1" column="3">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="copyPushButton">
+     <property name="text">
+      <string>Copy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="9">
+    <widget class="QLabel" name="previewLabel">
+     <property name="text">
+      <string>PREVIEW LABEL</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="8">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="9">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -40,7 +81,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <property name="documentMode">
       <bool>true</bool>
@@ -53,7 +94,16 @@
        <string>&amp;Player</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
         <number>4</number>
        </property>
        <property name="spacing">
@@ -690,7 +740,16 @@
             <bool>false</bool>
            </property>
            <layout class="QGridLayout" name="gridLayout">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
              <number>2</number>
             </property>
             <property name="spacing">
@@ -797,7 +856,16 @@
             <string>Bow</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_8">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
              <number>2</number>
             </property>
             <property name="spacing">
@@ -881,7 +949,16 @@
           <string>Bug Net</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -942,7 +1019,16 @@
           <string>Slingshot</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -1105,7 +1191,16 @@
           <string>Misc</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -1333,7 +1428,16 @@
           <string>Swords</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_10">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -1513,7 +1617,16 @@
           <string>Quest Items</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_13">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -2678,19 +2791,78 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QLabel" name="checksumLbl">
-     <property name="text">
-      <string>Checksum:</string>
-     </property>
+     <widget class="QWidget" name="skipTab">
+      <attribute name="title">
+       <string>Cutscene Skip</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_20">
+       <item row="0" column="0">
+        <spacer name="skipDataVerticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="setAllSkipsBtn">
+         <property name="text">
+          <string>Set All</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="clearAllSkipsBtn">
+         <property name="text">
+          <string>Clear All</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <spacer name="skipDataHorizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="1" column="0">
     <widget class="QPushButton" name="deletePushButton">
      <property name="text">
       <string>Delete</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="8">
+    <widget class="QLabel" name="checksumValueLbl">
+     <property name="font">
+      <font>
+       <family>Courier New</family>
+      </font>
+     </property>
+     <property name="text">
+      <string notr="true">Checksum</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QLabel" name="skipChecksumLbl">
+     <property name="text">
+      <string>Skip Checksum:</string>
      </property>
     </widget>
    </item>
@@ -2701,51 +2873,17 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="5">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="6">
+    <widget class="QLabel" name="skipChecksumValueLbl">
+     <property name="font">
+      <font>
+       <family>Courier New</family>
+      </font>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" colspan="6">
-    <widget class="QLabel" name="previewLabel">
      <property name="text">
-      <string>PREVIEW LABEL</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <string notr="true">Skip Checksum</string>
      </property>
     </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="copyPushButton">
-     <property name="text">
-      <string>Copy</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -2939,12 +3077,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>288</y>
+     <x>549</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>344</y>
+     <x>549</x>
+     <y>355</y>
     </hint>
    </hints>
   </connection>
@@ -2971,8 +3109,8 @@
    <slot>setSlingshot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>487</x>
-     <y>119</y>
+     <x>586</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>450</x>
@@ -2987,8 +3125,8 @@
    <slot>setGoddessWhiteSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>390</x>
-     <y>390</y>
+     <x>456</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
      <x>219</x>
@@ -3003,12 +3141,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>288</y>
+     <x>636</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>552</x>
-     <y>344</y>
+     <x>636</x>
+     <y>355</y>
     </hint>
    </hints>
   </connection>
@@ -3019,8 +3157,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>551</y>
+     <x>561</x>
+     <y>575</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3083,12 +3221,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>288</y>
+     <x>725</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>640</x>
-     <y>344</y>
+     <x>725</x>
+     <y>355</y>
     </hint>
    </hints>
   </connection>
@@ -3131,8 +3269,8 @@
    <slot>setWallet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>217</y>
+     <x>708</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
      <x>726</x>
@@ -3163,8 +3301,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>550</x>
-     <y>204</y>
+     <x>638</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3211,8 +3349,8 @@
    <slot>setGoddessLongSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>225</y>
+     <x>586</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel">
      <x>694</x>
@@ -3259,12 +3397,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>465</x>
-     <y>372</y>
+     <x>553</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>428</y>
+     <x>549</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -3339,8 +3477,8 @@
    <slot>setSavetime(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>157</y>
+     <x>312</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3371,12 +3509,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>120</y>
+     <x>725</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>640</x>
-     <y>176</y>
+     <x>725</x>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -3387,12 +3525,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>204</y>
+     <x>725</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
-     <x>640</x>
-     <y>260</y>
+     <x>725</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
@@ -3435,8 +3573,8 @@
    <slot>setWallet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>383</y>
+     <x>708</x>
+     <y>450</y>
     </hint>
     <hint type="destinationlabel">
      <x>745</x>
@@ -3451,8 +3589,8 @@
    <slot>setMasterSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>454</x>
-     <y>390</y>
+     <x>521</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
      <x>314</x>
@@ -3467,8 +3605,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>516</y>
+     <x>561</x>
+     <y>540</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3483,12 +3621,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>204</y>
+     <x>551</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>260</y>
+     <x>549</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
@@ -3499,12 +3637,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>204</y>
+     <x>462</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>260</y>
+     <x>462</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
@@ -3515,8 +3653,8 @@
    <slot>setTrueMasterSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>390</y>
+     <x>586</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
      <x>570</x>
@@ -3563,12 +3701,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>550</x>
-     <y>204</y>
+     <x>638</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
-     <x>552</x>
-     <y>260</y>
+     <x>636</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
@@ -3579,8 +3717,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>481</y>
+     <x>561</x>
+     <y>505</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3627,8 +3765,8 @@
    <slot>setSlingshot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>391</x>
-     <y>119</y>
+     <x>489</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>355</x>
@@ -3675,8 +3813,8 @@
    <slot>setWallet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>300</y>
+     <x>708</x>
+     <y>367</y>
     </hint>
     <hint type="destinationlabel">
      <x>456</x>
@@ -3691,8 +3829,8 @@
    <slot>setWallet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>466</y>
+     <x>708</x>
+     <y>533</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3707,12 +3845,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>391</x>
-     <y>119</y>
+     <x>489</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>487</x>
-     <y>172</y>
+     <x>586</x>
+     <y>193</y>
     </hint>
    </hints>
   </connection>
@@ -3723,8 +3861,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>176</y>
+     <x>549</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3739,8 +3877,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>176</y>
+     <x>725</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3755,8 +3893,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>204</y>
+     <x>551</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>743</x>
@@ -3803,8 +3941,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>372</y>
+     <x>464</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>
@@ -3835,8 +3973,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>288</y>
+     <x>636</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3851,8 +3989,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>204</y>
+     <x>462</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -3867,12 +4005,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>638</x>
-     <y>372</y>
+     <x>725</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
-     <x>640</x>
-     <y>428</y>
+     <x>725</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -3883,8 +4021,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>120</y>
+     <x>725</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>742</x>
@@ -3899,8 +4037,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>288</y>
+     <x>725</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>651</x>
@@ -3915,8 +4053,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>428</y>
+     <x>549</x>
+     <y>435</y>
     </hint>
     <hint type="destinationlabel">
      <x>285</x>
@@ -3931,8 +4069,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>300</y>
+     <x>561</x>
+     <y>323</y>
     </hint>
     <hint type="destinationlabel">
      <x>498</x>
@@ -3963,12 +4101,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>550</x>
-     <y>120</y>
+     <x>638</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>552</x>
-     <y>176</y>
+     <x>636</x>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -3979,8 +4117,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>465</x>
-     <y>372</y>
+     <x>553</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
      <x>311</x>
@@ -4011,8 +4149,8 @@
    <slot>setAmmo(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>487</x>
-     <y>172</y>
+     <x>586</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -4027,8 +4165,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>125</y>
+     <x>561</x>
+     <y>148</y>
     </hint>
     <hint type="destinationlabel">
      <x>527</x>
@@ -4043,8 +4181,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>411</y>
+     <x>561</x>
+     <y>435</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -4059,8 +4197,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>446</y>
+     <x>561</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>615</x>
@@ -4075,8 +4213,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>230</y>
+     <x>561</x>
+     <y>253</y>
     </hint>
     <hint type="destinationlabel">
      <x>455</x>
@@ -4091,8 +4229,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>265</y>
+     <x>561</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>506</x>
@@ -4123,8 +4261,8 @@
    <slot>setCurrentRoom(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>159</x>
-     <y>250</y>
+     <x>280</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>206</x>
@@ -4171,8 +4309,8 @@
    <slot>setCurrentMap(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>188</y>
+     <x>280</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>440</x>
@@ -4187,8 +4325,8 @@
    <slot>setCurrentArea(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>219</y>
+     <x>280</x>
+     <y>245</y>
     </hint>
     <hint type="destinationlabel">
      <x>654</x>
@@ -4203,8 +4341,8 @@
    <slot>setPlayerName(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>382</y>
+     <x>232</x>
+     <y>407</y>
     </hint>
     <hint type="destinationlabel">
      <x>104</x>
@@ -4251,8 +4389,8 @@
    <slot>setTotalHP(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>464</y>
+     <x>225</x>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -4267,12 +4405,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>120</y>
+     <x>462</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>176</y>
+     <x>462</x>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -4315,12 +4453,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>288</y>
+     <x>466</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>344</y>
+     <x>462</x>
+     <y>355</y>
     </hint>
    </hints>
   </connection>
@@ -4347,8 +4485,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>160</y>
+     <x>561</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
      <x>514</x>
@@ -4363,8 +4501,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>195</y>
+     <x>561</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
      <x>482</x>
@@ -4395,8 +4533,8 @@
    <slot>setRoomID(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>159</x>
-     <y>281</y>
+     <x>307</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -4411,8 +4549,8 @@
    <slot>setWallet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>134</y>
+     <x>708</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
      <x>655</x>
@@ -4475,8 +4613,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>204</y>
+     <x>725</x>
+     <y>250</y>
     </hint>
     <hint type="destinationlabel">
      <x>690</x>
@@ -4491,8 +4629,8 @@
    <slot>setGoddessSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>454</x>
-     <y>225</y>
+     <x>521</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel">
      <x>533</x>
@@ -4507,8 +4645,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>344</y>
+     <x>462</x>
+     <y>355</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4555,8 +4693,8 @@
    <slot>setRupees(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>423</y>
+     <x>232</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>345</x>
@@ -4619,8 +4757,8 @@
    <slot>setPracticeSword(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>390</x>
-     <y>225</y>
+     <x>456</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel">
      <x>560</x>
@@ -4635,8 +4773,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>288</y>
+     <x>466</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4651,8 +4789,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>344</y>
+     <x>725</x>
+     <y>355</y>
     </hint>
     <hint type="destinationlabel">
      <x>614</x>
@@ -4667,8 +4805,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>428</y>
+     <x>725</x>
+     <y>435</y>
     </hint>
     <hint type="destinationlabel">
      <x>501</x>
@@ -4683,8 +4821,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>372</y>
+     <x>640</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
      <x>344</x>
@@ -4699,8 +4837,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>176</y>
+     <x>462</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4715,8 +4853,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>640</x>
-     <y>260</y>
+     <x>725</x>
+     <y>275</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4731,8 +4869,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>260</y>
+     <x>462</x>
+     <y>275</y>
     </hint>
     <hint type="destinationlabel">
      <x>743</x>
@@ -4795,12 +4933,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>372</y>
+     <x>464</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>428</y>
+     <x>462</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -4811,8 +4949,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>260</y>
+     <x>549</x>
+     <y>275</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4827,8 +4965,8 @@
    <slot>setCoord(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>376</y>
+     <x>561</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>465</x>
@@ -4859,8 +4997,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>260</y>
+     <x>636</x>
+     <y>275</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -4907,8 +5045,8 @@
    <slot>setBugnet(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>292</x>
-     <y>131</y>
+     <x>373</x>
+     <y>181</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -4923,12 +5061,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>120</y>
+     <x>551</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>176</y>
+     <x>549</x>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -4939,12 +5077,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>372</y>
+     <x>640</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
-     <x>552</x>
-     <y>428</y>
+     <x>636</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -4987,8 +5125,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>428</y>
+     <x>462</x>
+     <y>435</y>
     </hint>
     <hint type="destinationlabel">
      <x>177</x>
@@ -5035,8 +5173,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>428</y>
+     <x>636</x>
+     <y>435</y>
     </hint>
     <hint type="destinationlabel">
      <x>716</x>
@@ -5083,8 +5221,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>288</y>
+     <x>549</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5099,8 +5237,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>344</y>
+     <x>636</x>
+     <y>355</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5131,8 +5269,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>120</y>
+     <x>462</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5163,8 +5301,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>344</y>
+     <x>549</x>
+     <y>355</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5179,8 +5317,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>638</x>
-     <y>372</y>
+     <x>725</x>
+     <y>410</y>
     </hint>
     <hint type="destinationlabel">
      <x>420</x>
@@ -5195,8 +5333,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>550</x>
-     <y>120</y>
+     <x>638</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5211,8 +5349,8 @@
    <slot>setMaterial(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>120</y>
+     <x>551</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5243,8 +5381,8 @@
    <slot>setMaterialAmount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>176</y>
+     <x>636</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>749</x>
@@ -5380,6 +5518,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>setAllSkipsBtn</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>SkywardSwordEditorForm</receiver>
+   <slot>setAllSkips()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>573</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>97</x>
+     <y>647</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearAllSkipsBtn</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>SkywardSwordEditorForm</receiver>
+   <slot>clearAllSkips()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>575</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>643</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onDelete()</slot>
@@ -5428,5 +5598,7 @@
   <slot>setGratitudeCrystals(int)</slot>
   <slot>triforceClicked()</slot>
   <slot>onCopy()</slot>
+  <slot>setAllSkips()</slot>
+  <slot>clearAllSkips()</slot>
  </slots>
 </ui>

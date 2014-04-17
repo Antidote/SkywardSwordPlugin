@@ -17,6 +17,8 @@
 #include "SettingsManager.hpp"
 #include "Constants.hpp"
 #include "ui_SettingsDialog.h"
+#include "SkywardSwordPlugin.hpp"
+#include "Common.hpp"
 #include <QShowEvent>
 
 #include <QSettings>
@@ -27,10 +29,14 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    SkipDatabaseWidget* sdw = qobject_cast<SkipDatabaseWidget*>(ui->skipDatabaseTab);
+    connect(sdw, SIGNAL(skipDatabaseChanged()), this, SIGNAL(skipDatabaseChanged()));
+    restoreWidgetGeom(this, "settingsDialogGeom");
 }
 
 SettingsDialog::~SettingsDialog()
 {
+    saveWidgetGeom(this, "settingsDialogGeom");
     delete ui;
 }
 
@@ -39,13 +45,23 @@ QWidget* SettingsDialog::centralWidget() const
     return ui->settingsTab;
 }
 
+QList<SkipElement> SettingsDialog::skipDatabase() const
+{
+    SkipDatabaseWidget* sdw = qobject_cast<SkipDatabaseWidget*>(ui->skipDatabaseTab);
+    return sdw->skipDatabase();
+}
+
+void SettingsDialog::reloadSkipDatabase()
+{
+    SkipDatabaseWidget* sdw = qobject_cast<SkipDatabaseWidget*>(ui->skipDatabaseTab);
+    sdw->loadDatabase();
+}
+
 void SettingsDialog::restoreOwnership()
 {
-    if (ui->settingsTab->parent() != this)
-    {
-        ui->settingsTab->setParent(this);
-        ui->gridLayout->addWidget(ui->settingsTab, 0, 0, 2, 2);
-    }
+    ui->settingsTab->setParent(NULL);
+    ui->gridLayout->addWidget(ui->settingsTab, 0, 0, 2, 2);
+    ui->settingsTab->show();
 }
 
 void SettingsDialog::loadSettings()
@@ -89,6 +105,8 @@ void SettingsDialog::accept()
     if (ui->updateUrlLineEdit->isModified() && !ui->updateUrlLineEdit->text().isEmpty())
         settings->setUpdateUrl(ui->updateUrlLineEdit->text());
     settings->setUpdateCheckOnStart(ui->checkOnStart->isChecked());
+    SkipDatabaseWidget* sdw = qobject_cast<SkipDatabaseWidget*>(ui->skipDatabaseTab);
+    sdw->saveDatabase();
     QDialog::accept();
 }
 
@@ -114,6 +132,5 @@ void SettingsDialog::onTextChanged(QString text)
 void SettingsDialog::showEvent(QShowEvent* se)
 {
     QDialog::showEvent(se);
-
     loadSettings();
 }

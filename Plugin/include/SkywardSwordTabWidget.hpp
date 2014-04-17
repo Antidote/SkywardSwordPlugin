@@ -3,10 +3,6 @@
 
 #include <QTabWidget>
 
-namespace Ui {
-class SkywardSwordTabWidget;
-}
-
 class SkywardSwordTabWidget : public QTabWidget
 {
     Q_OBJECT
@@ -17,7 +13,6 @@ public:
 
     QTabBar* tabBar() const;
 private:
-    Ui::SkywardSwordTabWidget *ui;
 };
 
 #endif // SKYWARDSWORDTABWIDGET_HPP

@@ -42,6 +42,15 @@
 #include <QFileInfo>
 #include <QTabBar>
 #include <QDebug>
+#include <ZQuestFile.hpp>
+#include <ZQuestFileWriter.hpp>
+#include <ZQuestFileReader.hpp>
+
+struct ExportFmt
+{
+    char GameData[0x53C0];
+    char SkipData[0x24];
+};
 
 SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader, const QString &file)
     : GameDocument(loader, file),
@@ -59,11 +68,14 @@ SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader
     if (file.isEmpty())
     {
         m_skipData = new char[0x80];
+        memset(m_skipData, 0, 0x80);
         for (int i = 0; i < 3; i++)
         {
             char* data = new char[0x53C0];
             memset(data, 0, 0x53C0);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data);
+            char* skipData = new char[0x24];
+            memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
+            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data, skipData);
             sw->setNew(true);
             tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
@@ -320,6 +332,7 @@ bool SkywardSwordGameDocument::save(const QString& filename)
                 // Let's be sure we have a proper checksum
                 ef->updateChecksum();
                 writer.writeBytes((Int8*)ef->gameData(), 0x53C0);
+                memcpy((m_skipData + (0x24 * i)), ef->skipData(), 0x24);
             }
         }
 
@@ -366,7 +379,7 @@ void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
 
     m_copyWidget->setQuestEnabled((CopyWidget::Quest)index, false);
     m_copyWidget->move(QCursor().pos());
-    m_copyWidget->show();
+    m_copyWidget->exec();
 
     if (m_copyWidget->result() == QDialog::Accepted)
     {
@@ -384,21 +397,30 @@ void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
         {
             dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest1));
             if (dest)
+            {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
+                dest->setSkipData(QByteArray(source->skipData(), 0x24));
+            }
             dest = NULL;
         }
         if (m_copyWidget->questChecked(CopyWidget::Quest2) && source != tw->widget(CopyWidget::Quest2))
         {
             dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest2));
             if (dest)
+            {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
+                dest->setSkipData(QByteArray(source->skipData(), 0x24));
+            }
             dest = NULL;
         }
         if (m_copyWidget->questChecked(CopyWidget::Quest3) && source != tw->widget(CopyWidget::Quest3))
         {
             dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest3));
             if (dest)
+            {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
+                dest->setSkipData(QByteArray(source->skipData(), 0x24));
+            }
             dest = NULL;
         }
     }
@@ -436,11 +458,17 @@ bool SkywardSwordGameDocument::loadData(zelda::io::BinaryReader reader)
         if (headerSize != 0x1D)
             throw zelda::error::InvalidOperationException("Invalid header size");
 
-
+        Uint32 oldPos = reader.position();
+        reader.seek(0x80, zelda::io::BinaryReader::End);
+        m_skipData = (char*)reader.readBytes(0x80);
+        reader.seek(oldPos, zelda::io::BinaryReader::Beginning);
         for (int i = 0; i < 3; i++)
         {
             char* data = (char*)reader.readBytes(0x53C0);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data);
+            char* skipData = new char[0x24];
+            memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
+            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data, skipData);
+
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
             connect(sw, SIGNAL(copy(SkywardSwordEditorForm*)), this, SLOT(onCopy(SkywardSwordEditorForm*)));
             if (!sw->isNew())
@@ -448,7 +476,7 @@ bool SkywardSwordGameDocument::loadData(zelda::io::BinaryReader reader)
             else
                 tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
         }
-        m_skipData = (char*)reader.readBytes(0x80);
+
         return true;
     }
     catch (zelda::error::Exception e)

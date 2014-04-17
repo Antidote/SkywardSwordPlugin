@@ -15,6 +15,9 @@
 
 #include "Common.hpp"
 #include <ctime>
+#include <QWidget>
+#include <QSettings>
+#include "SkywardSwordPlugin.hpp"
 
 quint64 wiiTime()
 {
@@ -56,4 +59,22 @@ QDateTime fromWiiTime(quint64 wiiTime)
     QDateTime tmp(QDate(2000, 1, 1));
     tmp = tmp.addSecs(wiiTime / TICKS_PER_SECOND);
     return tmp;
+}
+
+
+void saveWidgetGeom(QWidget* target, QString key)
+{
+    QSettings settings;
+    settings.beginGroup(SkywardSwordPlugin::instance()->name());
+    settings.setValue(key, target->saveGeometry());
+    settings.endGroup();
+}
+
+
+void restoreWidgetGeom(QWidget* target, QString key)
+{
+    QSettings settings;
+    settings.beginGroup(SkywardSwordPlugin::instance()->name());
+    target->restoreGeometry(settings.value(key).toByteArray());
+    settings.endGroup();
 }

@@ -2,15 +2,12 @@
 #include "ui_SkywardSwordTabWidget.h"
 
 SkywardSwordTabWidget::SkywardSwordTabWidget(QWidget *parent) :
-    QTabWidget(parent),
-    ui(new Ui::SkywardSwordTabWidget)
+    QTabWidget(parent)
 {
-    ui->setupUi(this);
 }
 
 SkywardSwordTabWidget::~SkywardSwordTabWidget()
 {
-    delete ui;
 }
 
 QTabBar* SkywardSwordTabWidget::tabBar() const

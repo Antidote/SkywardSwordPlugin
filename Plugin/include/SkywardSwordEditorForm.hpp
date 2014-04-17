@@ -23,6 +23,7 @@
 
 class SkywardSwordGameDocument;
 class SettingsManager;
+class QCheckBox;
 
 namespace Ui {
 class SkywardSwordEditorForm;
@@ -134,20 +135,24 @@ public:
         REGION_PAL   = 0x50
     };
 
-    explicit SkywardSwordEditorForm(SkywardSwordGameDocument* file, const char* data, QWidget *parent = 0);
+    explicit SkywardSwordEditorForm(SkywardSwordGameDocument* file, const char* data, const char* skipData, QWidget *parent = 0);
     ~SkywardSwordEditorForm();
 
     void setGameData(const QByteArray& data);
-    char* gameData();
+    char* gameData() const;
 
+    void setSkipData(const QByteArray& data);
+    char* skipData() const;
     int currentTab();
     void setCurrentTab(int index);
+
 public slots:
     // Actions
     void onDelete();
     void onCreate();
     void onCopy();
     void onModified();
+    void onCheckboxToggled();
 
     // Data
     // Play Stats
@@ -257,13 +262,21 @@ public slots:
     void setNew(bool isNew);
     int checksum();
     void updateChecksum();
+    int skipChecksum();
+    void updateSkipChecksum();
 
-
+    void setAllSkips();
+    void clearAllSkips();
 signals:
     void modified();
     void copy(SkywardSwordEditorForm*);
 
+private slots:
+    void buildSkipTab();
 private:
+    bool skipBit(quint32 offset, quint32 bit);
+    void setSkipBit(quint32 offset, quint32 bit, bool val);
+    void addSkipChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible);
     void setQuantity(bool isRight, int offset, quint32 val);
     quint32 quantity(bool isRight, int offset) const;
     bool flag(quint32 offset, quint32 flag);
@@ -271,9 +284,14 @@ private:
     void updateData();
     void updateBugs();
     void updateMaterials();
+    void updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox);
     Ui::SkywardSwordEditorForm *ui;
     SkywardSwordGameDocument* m_gameFile;
     char* m_gameData;
+    char* m_skipData;
+    quint32 m_skipChkColumn;
+    quint32 m_skipChkRow;
+    QList<QCheckBox*> m_skipChkBoxes;
 };
 
 #endif // SKYWARDSWORDEDITORFORM_HPP

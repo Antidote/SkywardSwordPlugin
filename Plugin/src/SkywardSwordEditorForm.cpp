@@ -18,23 +18,36 @@
 #include "SkywardSwordGameFile.hpp"
 #include "SettingsManager.hpp"
 #include "SkywardSwordPlugin.hpp"
+#include "SettingsDialog.hpp"
 #include "Constants.hpp"
 
 #include <QtEndian>
 #include <Checksums.hpp>
 #include <utility.hpp>
+#include <QSpacerItem>
 
-SkywardSwordEditorForm::SkywardSwordEditorForm(SkywardSwordGameDocument* file, const char *data, QWidget *parent)
+
+
+SkywardSwordEditorForm::SkywardSwordEditorForm(SkywardSwordGameDocument* file, const char *data, const char* skipData, QWidget *parent)
     : QWidget(parent),
       ui(new Ui::SkywardSwordEditorForm),
       m_gameFile(file),
-      m_gameData((char*)data)
+      m_gameData((char*)data),
+      m_skipData((char*)skipData),
+      m_skipChkColumn(0),
+      m_skipChkRow(0)
 {
     ui->setupUi(this);
     // Make sure the selected tab is "Player Info"
     ui->tabWidget->setCurrentIndex(0);
     connect(this, SIGNAL(modified()), this, SLOT(onModified()));
     updateData();
+
+    buildSkipTab();
+
+    SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
+    connect(settingsDialog, SIGNAL(skipDatabaseChanged()), this, SLOT(buildSkipTab()));
+
 
 #ifdef SS_PREVIEW
     ui->previewLabel->setText("<center><b>PREVIEW BUILD</b></center>");
@@ -47,18 +60,38 @@ SkywardSwordEditorForm::SkywardSwordEditorForm(SkywardSwordGameDocument* file, c
 
 SkywardSwordEditorForm::~SkywardSwordEditorForm()
 {
+//    m_skipChkBoxes.clear();
+    delete[] m_gameData;
+    m_gameData = NULL;
+    delete[] m_skipData;
+    m_skipData = NULL;
     delete ui;
 }
 
 void SkywardSwordEditorForm::setGameData(const QByteArray& data)
 {
+    if (data.size() != 0x53C0)
+    {
+        qWarning() << "Data must be exactly 0x53C0 bytes got" << hex << data.size() << "bytes";
+        return;
+    }
     memcpy(m_gameData, data.data(), data.size());
     emit modified();
 }
 
-char* SkywardSwordEditorForm::gameData()
+char* SkywardSwordEditorForm::gameData() const
 {
     return m_gameData;
+}
+
+void SkywardSwordEditorForm::setSkipData(const QByteArray& data)
+{
+    memcpy(m_skipData, data.data(), data.size());
+}
+
+char* SkywardSwordEditorForm::skipData() const
+{
+    return m_skipData;
 }
 
 int SkywardSwordEditorForm::currentTab()
@@ -1082,8 +1115,30 @@ void SkywardSwordEditorForm::onModified()
 
     this->setUpdatesEnabled(false);
     updateChecksum();
+    updateSkipChecksum();
     updateData();
     this->setUpdatesEnabled(true);
+}
+
+void SkywardSwordEditorForm::onCheckboxToggled()
+{
+    QCheckBox* chkBox = qobject_cast<QCheckBox*>(sender());
+
+    if (!chkBox)
+        return;
+
+    qDebug() << chkBox->objectName();
+    if (chkBox->property("isCutscene").isValid() && chkBox->property("isCutscene").toBool())
+    {
+        bool ok = false;
+        quint32 offset = chkBox->property("offset").toInt(&ok);
+        if (ok)
+        {
+            quint32 bit = chkBox->property("bit").toInt(&ok);
+            if (ok)
+                setSkipBit(offset, bit, chkBox->isChecked());
+        }
+    }
 }
 
 QString SkywardSwordEditorForm::currentMap() const
@@ -1221,6 +1276,125 @@ void SkywardSwordEditorForm::updateChecksum()
         emit modified();
 }
 
+int SkywardSwordEditorForm::skipChecksum()
+{
+    return qFromBigEndian(*(quint32*)(m_skipData + 0x20));
+}
+
+void SkywardSwordEditorForm::updateSkipChecksum()
+{
+    int oldChecksum = skipChecksum();
+    *(quint32*)(m_skipData + 0x20) = qToBigEndian((quint32)zelda::Checksums::crc32((Uint8*)m_skipData, 0x20));
+
+    if (skipChecksum() != oldChecksum)
+        emit modified();
+
+    qDebug() << hex << skipChecksum();
+}
+
+void SkywardSwordEditorForm::setAllSkips()
+{
+    SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
+
+    foreach (SkipElement elem, settingsDialog->skipDatabase())
+        setSkipBit(elem.offset, elem.bit, true);
+}
+
+void SkywardSwordEditorForm::clearAllSkips()
+{
+    SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
+
+    foreach (SkipElement elem, settingsDialog->skipDatabase())
+        setSkipBit(elem.offset, elem.bit, false);
+}
+
+void SkywardSwordEditorForm::buildSkipTab()
+{
+    SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
+    QList<SkipElement> database = settingsDialog->skipDatabase();
+
+    while (m_skipChkBoxes.count() > database.count())
+    {
+        delete m_skipChkBoxes.takeLast();
+        m_skipChkColumn--;
+        if (m_skipChkColumn <= 0)
+        {
+            if (m_skipChkRow > 0)
+            {
+                m_skipChkColumn = 8;
+                m_skipChkRow--;
+            }
+            else
+                m_skipChkColumn = 0;
+        }
+    }
+
+
+    for (int i = 0; i < database.count(); i++)
+    {
+        SkipElement elem = database.at(i);
+        if (i >= m_skipChkBoxes.count())
+            addSkipChkBox(elem.objectName, elem.text, elem.offset, elem.bit, elem.visible);
+        else
+            updateChkBox(elem.objectName, elem.text, elem.offset, elem.bit, elem.visible, m_skipChkBoxes.at(i));
+    }
+}
+
+bool SkywardSwordEditorForm::skipBit(quint32 offset, quint32 bit)
+{
+    return (bool)(*(Uint8*)(m_skipData + offset) & (1 << bit));
+}
+
+void SkywardSwordEditorForm::setSkipBit(quint32 offset, quint32 bit, bool val)
+{
+    if (val)
+        *(Uint8*)(m_skipData + offset) |= (1 << bit);
+    else
+        *(Uint8*)(m_skipData + offset) &= ~(1 << bit);
+    emit modified();
+}
+
+
+
+void SkywardSwordEditorForm::addSkipChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible)
+{   
+    if (name.isNull())
+    {
+        qWarning() << "Unable to add checkbox without an object name";
+        return;
+    }
+    if (bit > 7)
+    {
+        qWarning() << "Bit out of range, expected 0-7 got " << bit;
+    }
+
+    QGridLayout* layout = qobject_cast<QGridLayout*>(ui->skipTab->layout());
+    QCheckBox* chkBox = new QCheckBox(ui->skipTab);
+    layout->addWidget(chkBox, m_skipChkRow, m_skipChkColumn);
+    m_skipChkColumn++;
+    if (m_skipChkColumn >= 6)
+    {
+        m_skipChkColumn = 0;
+        m_skipChkRow++;
+    }
+
+    // Remove from layout first, to avoid weird crashes.
+    layout->removeItem(ui->skipDataHorizontalSpacer);
+    layout->removeItem(ui->skipDataVerticalSpacer);
+    layout->addItem(ui->skipDataHorizontalSpacer, layout->rowCount(), layout->columnCount());
+    layout->addItem(ui->skipDataVerticalSpacer, layout->rowCount(), layout->columnCount());
+    layout->removeWidget(ui->setAllSkipsBtn);
+    layout->removeWidget(ui->clearAllSkipsBtn);
+    layout->addWidget(ui->setAllSkipsBtn, layout->rowCount(), 0);
+    layout->addWidget(ui->clearAllSkipsBtn, layout->rowCount() - 1, 1);
+
+    updateChkBox(name, title, offset, bit, visible, chkBox);
+
+    connect(chkBox, SIGNAL(toggled(bool)), this, SLOT(onCheckboxToggled()));
+
+    m_skipChkBoxes << chkBox;
+}
+
 void SkywardSwordEditorForm::setQuantity(bool isRight, int offset, quint32 val)
 {
     quint16 oldVal = qFromBigEndian(*(quint16*)(m_gameData + offset));
@@ -1274,6 +1448,7 @@ void SkywardSwordEditorForm::updateData()
     ui->deletePushButton->setEnabled(!isNew());
     ui->createPushButton->setEnabled(isNew());
     ui->checksumValueLbl->setText("0x" + QString("%1").arg((uint)checksum(), 8, 16, QChar('0')).toUpper());
+    ui->skipChecksumValueLbl->setText("0x" + QString("%1").arg((uint)skipChecksum(), 8, 16, QChar('0')).toUpper());
     ui->tabWidget->setEnabled(!isNew());
 
     // Play Stats
@@ -1372,6 +1547,23 @@ void SkywardSwordEditorForm::updateData()
     // Gratitude crystals
     ui->gratitudeCrystalsLabel->setEnabled(gratitudeCrystals() > 0);
     ui->gratitudeCrystalsSpinBox->setValue(gratitudeCrystals());
+
+    // Cutscenes
+    foreach (QCheckBox* chkBox, m_skipChkBoxes)
+    {
+        if (chkBox->property("isCutscene").isValid() && chkBox->property("isCutscene").toBool())
+        {
+            bool ok = false;
+            quint32 offset = chkBox->property("offset").toInt(&ok);
+            if (ok)
+            {
+                quint32 bit = chkBox->property("bit").toInt(&ok);
+                if (ok)
+                    chkBox->setChecked(skipBit(offset, bit));
+            }
+        }
+    }
+
     this->setUpdatesEnabled(true);
     //this->update();
 }
@@ -1439,4 +1631,16 @@ void SkywardSwordEditorForm::updateMaterials()
     ui->goldenSkullSpinBox->setValue(materialAmount(GoldenSkull));
     ui->goddessPlumeChkBox->setChecked(material(GoddessPlume));
     ui->goddessPlumeSpinBox->setValue(materialAmount(GoddessPlume));
+}
+
+void SkywardSwordEditorForm::updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox)
+{
+    chkBox->setObjectName(name);
+    chkBox->setProperty("isCutscene", true);
+    chkBox->setProperty("offset", offset);
+    chkBox->setProperty("bit", bit);
+    chkBox->setChecked(skipBit(offset, bit));
+    chkBox->setVisible(visible);
+    // If the title is empty use the object name;
+    chkBox->setText((title.isEmpty() ? name : title));
 }

@@ -1,38 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>SkipDatabaseElementEditor</class>
  <widget class="QDialog" name="SkipDatabaseElementEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>550</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Skip Element</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <item row="0" column="1" colspan="2">
+       <widget class="QLineEdit" name="objectNameLineEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="bitLbl">
+        <property name="text">
+         <string>Bit:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QLineEdit" name="textLineEdit"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="objectNameLbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Object Name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>objectNameLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="textLbl">
+        <property name="text">
+         <string>Text:</string>
+        </property>
+        <property name="buddy">
+         <cstring>textLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="offsetLbl">
+        <property name="text">
+         <string>Offset (hex):</string>
+        </property>
+        <property name="buddy">
+         <cstring>offsetLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="3">
+       <widget class="QCheckBox" name="visibleChkBox">
+        <property name="text">
+         <string>Visible</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1" colspan="2">
+       <widget class="QSpinBox" name="bitSpinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximum">
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="offsetLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maxLength">
+         <number>2</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <pixmapfunction/>
  <resources/>
  <connections>
   <connection>
@@ -42,8 +148,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>290</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -58,8 +164,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>296</x>
+     <y>290</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -67,5 +173,90 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>objectNameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SkipDatabaseElementEditor</receiver>
+   <slot>onTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>textLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SkipDatabaseElementEditor</receiver>
+   <slot>onTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>offsetLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SkipDatabaseElementEditor</receiver>
+   <slot>onTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>264</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>104</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bitSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SkipDatabaseElementEditor</receiver>
+   <slot>onValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>visibleChkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SkipDatabaseElementEditor</receiver>
+   <slot>onToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>157</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>164</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>onTextChanged(QString)</slot>
+  <slot>onValueChanged(int)</slot>
+  <slot>onToggled(bool)</slot>
+ </slots>
 </ui>
