@@ -6,7 +6,7 @@ Plugin.depends += libzelda \
         Updater
 		
 SUBDIRS += \
-    libzelda \
+    Athena \
     Updater \
     PluginFramework \
     Plugin

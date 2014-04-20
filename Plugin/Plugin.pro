@@ -21,7 +21,7 @@ DEFINES += SKYWARDSWORDPLUGGIN_LIBRARY
 INCLUDEPATH += \
     include \
     ../PluginFramework/include \
-    ../../Athena/include \
+    ../Athena/include \
     ../Updater/include
 
 QMAKE_CXXFLAGS = -std=c++11
@@ -31,7 +31,7 @@ LIBS += \
     -L$$OUT_PWD/../Updater -lupdater
 
 CONFIG(release, release|debug){
-    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena
+    LIBS += -L$$OUT_PWD/Athena/lib -lAthena
     DEFINES -= SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
@@ -42,7 +42,7 @@ CONFIG(release, release|debug){
 
 
 CONFIG(debug, debug|release){
-    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena-d
+    LIBS += -L$$OUT_PWD/Athena/lib -lAthena-d
     DEFINES += SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
