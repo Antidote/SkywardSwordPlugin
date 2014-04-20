@@ -21,7 +21,7 @@
 
 class CopyWidget;
 class SkywardSwordEditorForm;
-namespace zelda
+namespace Athena
 {
 namespace io
 {
@@ -48,7 +48,7 @@ private slots:
     void onCopy(SkywardSwordEditorForm* source);
     void onTabMoved(int left, int right);
 private:
-    bool loadData(zelda::io::BinaryReader reader);
+    bool loadData(Athena::io::BinaryReader reader);
     char*       m_skipData;
     char        m_region;
     CopyWidget* m_copyWidget;

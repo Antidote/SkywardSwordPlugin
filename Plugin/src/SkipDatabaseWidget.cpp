@@ -59,6 +59,7 @@ void SkipDatabaseWidget::loadDatabase()
     QFile file(QString(plugin->mainWindow()->homePath().absolutePath() + QDir::separator() + plugin->name() + QDir::separator() + "skipdb.xml"));
     if (file.open(QFile::ReadOnly))
     {
+        qDebug() << "Parsing skip database file";
         QDomDocument document;
         if (!document.setContent(&file))
         {
@@ -67,15 +68,21 @@ void SkipDatabaseWidget::loadDatabase()
         }
 
         QDomElement rootElement = document.documentElement();
-        qDebug() << rootElement.tagName();
         QDomElement elem = rootElement.firstChildElement("SkipData");
         while (!elem.isNull())
         {
             QString objName = elem.attribute("objectName");
             QString text = elem.attribute("text");
             QString offsetHex = elem.attribute("offset");
-            quint32 offset = offsetHex.remove("0x", Qt::CaseInsensitive).toUInt(NULL, 16);
-            quint32 bit = elem.attribute("bit").toUInt();
+            bool ok = 0;
+            quint32 offset = offsetHex.remove("0x", Qt::CaseInsensitive).toUInt(&ok, 16);
+            if (!ok)
+                qWarning() << "SkipElement offset invalid";
+            quint32 bit = elem.attribute("bit").toUInt(&ok);
+
+            if (!ok)
+                qWarning() << "SkipElement bit invalid";
+
             bool visible = QVariant(elem.attribute("visible")).toBool();
             m_skipDatabase <<  SkipElement{objName,  text, offset, bit, visible};
             elem = elem.nextSiblingElement("SkipData");

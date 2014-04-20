@@ -20,12 +20,12 @@
 #include "Constants.hpp"
 #include <MainWindowBase.hpp>
 #include <DocumentBase.hpp>
-#include <Exception.hpp>
+#include <Athena/Exception.hpp>
 
 #include <QFileInfo>
 #include <QIcon>
 #include <QApplication>
-#include <BinaryReader.hpp>
+#include <Athena/BinaryReader.hpp>
 #include <Updater.hpp>
 #include <QMessageBox>
 #include <QMenuBar>
@@ -38,7 +38,8 @@ SkywardSwordPlugin::SkywardSwordPlugin()
       m_enabled(true),
       m_icon(QIcon(":/icons/Bomb64x64.png")),
       m_settingsDialog(NULL),
-      m_updater(new Updater(this))
+      m_updater(new Updater(this)),
+      m_mainWindow(NULL)
 {
     m_actionNewDocument->setIcon(m_icon);
     m_instance = this;
@@ -47,7 +48,10 @@ SkywardSwordPlugin::SkywardSwordPlugin()
 
 SkywardSwordPlugin::~SkywardSwordPlugin()
 {
-    m_mainWindow->newDocumentMenu()->removeAction(m_actionNewDocument);
+    if (m_mainWindow && m_mainWindow->newDocumentMenu()->actions().contains(m_actionNewDocument))
+        m_mainWindow->newDocumentMenu()->removeAction(m_actionNewDocument);
+
+    delete m_actionNewDocument;
     delete m_updater;
     m_updater = NULL;
     delete m_settingsDialog;
@@ -159,17 +163,14 @@ bool SkywardSwordPlugin::canLoad(const QString& filename)
     {
         try
         {
-            zelda::io::BinaryReader reader(filename.toStdString());
-            reader.setEndianess(zelda::BigEndian);
-            if (reader.length() > 0xF0C0)
-            {
-                reader.seek(0xF124);
-                gameId = reader.readUInt32();
-                if ((gameId & 0xFFFFFF00) == 0x534F5500)
-                    return true;
-                else
-                    gameId = -1;
-            }
+            Athena::io::BinaryReader reader(filename.toStdString());
+            reader.setEndian(Athena::Endian::BigEndian);
+            reader.seek(0xF124);
+            gameId = reader.readUint32();
+            if ((gameId & 0xFFFFFF00) == 0x534F5500)
+                return true;
+            else
+                gameId = -1;
         }
         catch(...)
         {
@@ -181,12 +182,12 @@ bool SkywardSwordPlugin::canLoad(const QString& filename)
     {
         try
         {
-            zelda::io::BinaryReader reader(filename.toStdString());
-            reader.setEndianess(zelda::BigEndian);
-            gameId = reader.readUInt32();
+            Athena::io::BinaryReader reader(filename.toStdString());
+            reader.setEndian(Athena::Endian::BigEndian);
+            gameId = reader.readUint32();
 
         }
-        catch(zelda::error::Exception e)
+        catch(...)
         {
             // Hide errors
         }

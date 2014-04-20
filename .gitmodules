@@ -4,6 +4,6 @@
 [submodule "Updater"]
 	path = Updater
 	url = https://github.com/Antidote/Updater.git
-[submodule "libzelda"]
-	path = libzelda
-	url = https://github.com/Antidote/libzelda.git
+[submodule "Athena"]
+	path = Athena
+	url = https://github.com/Antidote/Athena.git

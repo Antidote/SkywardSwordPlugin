@@ -10,3 +10,5 @@ SUBDIRS += \
     Updater \
     PluginFramework \
     Plugin
+
+OTHER_FILES += .travis.yml

@@ -19,23 +19,6 @@
 #include <QSettings>
 #include "SkywardSwordPlugin.hpp"
 
-quint64 wiiTime()
-{
-    time_t sysTime, tzDiff;
-    struct tm * gmTime;
-
-    time(&sysTime);
-
-    // Account for DST where needed
-    gmTime = localtime(&sysTime);
-
-    // Lazy way to get local time in sec
-    gmTime	= gmtime(&sysTime);
-    tzDiff = sysTime - mktime(gmTime);
-
-    return (quint64)(TICKS_PER_SECOND * ((sysTime + tzDiff) - SECONDS_TO_2000));
-}
-
 quint64 toWiiTime(QDateTime time)
 {
     time_t sysTime, tzDiff;

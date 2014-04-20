@@ -1,5 +1,4 @@
 #include "include/SkywardSwordTabWidget.hpp"
-#include "ui_SkywardSwordTabWidget.h"
 
 SkywardSwordTabWidget::SkywardSwordTabWidget(QWidget *parent) :
     QTabWidget(parent)

@@ -20,17 +20,21 @@
 #include "CopyWidget.hpp"
 
 
-#include <WiiSaveReader.hpp>
-#include <WiiSaveWriter.hpp>
-#include <WiiSave.hpp>
-#include <WiiFile.hpp>
-#include <WiiBanner.hpp>
-#include <WiiImage.hpp>
-#include <BinaryReader.hpp>
-#include <BinaryWriter.hpp>
-#include <Exception.hpp>
-#include <FileNotFoundException.hpp>
-#include <InvalidOperationException.hpp>
+#include <Athena/ZQuestFile.hpp>
+#include <Athena/ZQuestFileWriter.hpp>
+#include <Athena/ZQuestFileReader.hpp>
+#include <Athena/WiiSaveReader.hpp>
+#include <Athena/WiiSaveWriter.hpp>
+#include <Athena/WiiSave.hpp>
+#include <Athena/WiiFile.hpp>
+#include <Athena/WiiBanner.hpp>
+#include <Athena/WiiImage.hpp>
+#include <Athena/BinaryReader.hpp>
+#include <Athena/BinaryWriter.hpp>
+#include <Athena/Exception.hpp>
+#include <Athena/FileNotFoundException.hpp>
+#include <Athena/InvalidOperationException.hpp>
+#include <Athena/InvalidDataException.hpp>
 
 #include <WiiKeyManagerBase.hpp>
 #include <MainWindowBase.hpp>
@@ -42,15 +46,7 @@
 #include <QFileInfo>
 #include <QTabBar>
 #include <QDebug>
-#include <ZQuestFile.hpp>
-#include <ZQuestFileWriter.hpp>
-#include <ZQuestFileReader.hpp>
-
-struct ExportFmt
-{
-    char GameData[0x53C0];
-    char SkipData[0x24];
-};
+#include <QFileDialog>
 
 SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader, const QString &file)
     : GameDocument(loader, file),
@@ -75,7 +71,7 @@ SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader
             memset(data, 0, 0x53C0);
             char* skipData = new char[0x24];
             memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data, skipData);
+            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(data, skipData);
             sw->setNew(true);
             tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
@@ -100,35 +96,40 @@ bool SkywardSwordGameDocument::loadFile()
     {
         try
         {
-            QMessageBox msg(qApp->topLevelWidgets()[0]);
+            QMessageBox msg(SkywardSwordPlugin::instance()->mainWindow()->mainWindow());
             msg.setWindowTitle("Loading WiiSave...");
             msg.setText(tr("Loading WiiSave please wait...."));
             msg.setStandardButtons(QMessageBox::NoButton);
             msg.show();
             qApp->setOverrideCursor(Qt::WaitCursor);
-            zelda::io::WiiSaveReader reader(filePath().toStdString());
-            zelda::WiiSave* file = reader.readSave();
+            Athena::io::WiiSaveReader reader(filePath().toStdString());
+            Athena::WiiSave* file = reader.readSave();
             qApp->restoreOverrideCursor();
             msg.hide();
             if (file->file("/wiiking2.sav"))
             {
                 Uint8* data = file->file("/wiiking2.sav")->data();
                 m_isWiiSave = true;
-                return loadData(zelda::io::BinaryReader(data, (Uint64)file->file("/wiiking2.sav")->length()));
+                bool ret = loadData(Athena::io::BinaryReader(data, (Uint64)file->file("/wiiking2.sav")->length()));
+                delete file;
+                return ret;
             }
+            delete file;
         }
-        catch (...)
+        catch (Athena::error::Exception e)
         {
+            qWarning() << e.message().c_str() << " -> " << e.file().c_str() << "(" << e.line() << "): " << e.function().c_str();
             qApp->restoreOverrideCursor();
         }
     }
 
     try
     {
-        return loadData(zelda::io::BinaryReader(filePath().toStdString()));
+        return loadData(Athena::io::BinaryReader(filePath().toStdString()));
     }
-    catch(...)
+    catch (Athena::error::Exception e)
     {
+        qWarning() << e.message().c_str() << " -> " << e.file().c_str() << "(" << e.line() << "): " << e.function().c_str();
         return false;
     }
 }
@@ -177,23 +178,30 @@ bool SkywardSwordGameDocument::exportWiiSave()
     QTabWidget* tw = qobject_cast<QTabWidget*>(m_widget);
     Q_ASSERT(tw);
 
+    QString filename = QFileDialog::getSaveFileName(SkywardSwordPlugin::instance()->mainWindow()->mainWindow(), "Export wii save", QString(), "WiiSave *.bin (*.bin)");
+    if (filename.isNull())
+        return false;
+
+    if (QFileInfo(filename).suffix() != "bin")
+        filename += ".bin";
+
     QFile tmp(":/BannerData/banner.tpl");
 
-    zelda::WiiSave* save = new zelda::WiiSave;
+    Athena::WiiSave* save = new Athena::WiiSave;
 
     int gameId = ('S' << 24) | ('O' << 16) | ('U' << 8) | (int)m_region;
     quint64 titleId = 0x00010000;
     titleId = (qToBigEndian((quint64)gameId)) | (qToBigEndian(titleId) >> 32);
 
     qDebug() << hex << qFromBigEndian(titleId);
-    zelda::WiiBanner* banner = new zelda::WiiBanner();
+    Athena::WiiBanner* banner = new Athena::WiiBanner();
     banner->setGameID(qFromBigEndian(titleId));
     if (tmp.open(QFile::ReadOnly))
     {
         QDataStream dataStream(&tmp);
         char* bannerData = new char[192*64*2];
         dataStream.readRawData(bannerData, 192*64*2);
-        banner->setBannerImage(new zelda::WiiImage(192, 64, (Uint8*)bannerData));
+        banner->setBannerImage(new Athena::WiiImage(192, 64, (Uint8*)bannerData));
         tmp.close();
     }
     else
@@ -209,7 +217,7 @@ bool SkywardSwordGameDocument::exportWiiSave()
         QDataStream dataStream(&tmp);
         char* iconData = new char[48*48*2];
         dataStream.readRawData(iconData, 48*48*2);
-        banner->addIcon(new zelda::WiiImage(48, 48, (Uint8*)iconData));
+        banner->addIcon(new Athena::WiiImage(48, 48, (Uint8*)iconData));
         tmp.close();
     }
     else
@@ -243,19 +251,19 @@ bool SkywardSwordGameDocument::exportWiiSave()
         delete save;
         return false;
     }
-    banner->setPermissions(zelda::WiiFile::GroupRW | zelda::WiiFile::OwnerRW);
+    banner->setPermissions(Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW);
     banner->setAnimationSpeed(0);
     save->setBanner(banner);
 
     try
     {
-        zelda::io::BinaryWriter writer(QString(QDir::temp().tempPath() + "/tmp.sav").toStdString());
-        writer.setEndianess(zelda::BigEndian);
-        writer.writeUInt32(0x534F5500);
+        Athena::io::BinaryWriter writer(QString(QDir::temp().tempPath() + "/tmp.sav").toStdString());
+        writer.setEndian(Athena::Endian::BigEndian);
+        writer.writeUint32(0x534F5500);
         writer.seek(-1);
         writer.writeByte(m_region);
-        writer.seek(0x1C, zelda::io::BinaryWriter::Beginning);
-        writer.writeUInt32(0x1D);
+        writer.seek(0x1C, Athena::SeekOrigin::Begin);
+        writer.writeUint32(0x1D);
 
         for (int i = 0; i < 3; i++)
         {
@@ -272,8 +280,8 @@ bool SkywardSwordGameDocument::exportWiiSave()
         writer.writeBytes((Int8*)m_skipData, 0x80);
         writer.save();
 
-        save->addFile("/wiiking2.sav", new zelda::WiiFile("wiiking2.sav", zelda::WiiFile::GroupRW | zelda::WiiFile::OwnerRW, writer.data(), writer.length()));
-        save->addFile("/skip.dat", new zelda::WiiFile("skip.dat", zelda::WiiFile::GroupRW | zelda::WiiFile::OwnerRW, (Uint8*)m_skipData, 0x80));
+        save->addFile("/wiiking2.sav", new Athena::WiiFile("wiiking2.sav", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, writer.data(), writer.length()));
+        save->addFile("/skip.dat", new Athena::WiiFile("skip.dat", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, (Uint8*)m_skipData, 0x80));
     }
     catch(...)
     {
@@ -283,7 +291,7 @@ bool SkywardSwordGameDocument::exportWiiSave()
 
     try
     {
-        zelda::io::WiiSaveWriter writer("./test.bin");
+        Athena::io::WiiSaveWriter writer(filename.toStdString());
         if (writer.writeSave(save, (Uint8*)keyManager()->macAddr().data(), keyManager()->ngId(), (Uint8*)keyManager()->ngPriv().data(), (Uint8*)keyManager()->ngSig().data(), keyManager()->ngKeyId()))
             qDebug() << "export successful";
     }
@@ -314,13 +322,13 @@ bool SkywardSwordGameDocument::save(const QString& filename)
     try
     {
         QTabWidget* tw = (QTabWidget*)m_widget;
-        zelda::io::BinaryWriter writer(filePath().toStdString());
-        writer.setEndianess(zelda::BigEndian);
-        writer.writeUInt32(0x534F5500);
+        Athena::io::BinaryWriter writer(filePath().toStdString());
+        writer.setEndian(Athena::Endian::BigEndian);
+        writer.writeUint32(0x534F5500);
         writer.seek(-1);
         writer.writeByte(m_region);
-        writer.seek(0x1C, zelda::io::BinaryWriter::Beginning);
-        writer.writeUInt32(0x1D);
+        writer.seek(0x1C, Athena::SeekOrigin::Begin);
+        writer.writeUint32(0x1D);
 
         for (int i = 0; i < 3; i++)
         {
@@ -433,7 +441,7 @@ void SkywardSwordGameDocument::onTabMoved(int from, int to)
     onModified();
 }
 
-bool SkywardSwordGameDocument::loadData(zelda::io::BinaryReader reader)
+bool SkywardSwordGameDocument::loadData(Athena::io::BinaryReader reader)
 {
     SkywardSwordTabWidget* tw = qobject_cast<SkywardSwordTabWidget*>(m_widget);
     Q_ASSERT(tw);
@@ -443,31 +451,31 @@ bool SkywardSwordGameDocument::loadData(zelda::io::BinaryReader reader)
 
     try
     {
-        reader.setEndianess(zelda::BigEndian);
+        reader.setEndian(Athena::Endian::BigEndian);
 
-        Uint32 magic = reader.readUInt32();
+        Uint32 magic = reader.readUint32();
         m_region = magic & 0x000000FF;
         magic &= 0xFFFFFF00;
 
         if (magic != 0x534F5500)
-            throw zelda::error::InvalidOperationException("Not a valid Skyward Sword file");
+            THROW_INVALID_DATA_EXCEPTION("Not a valid Skyward Sword file");
 
-        reader.seek(0x1C, zelda::io::BinaryReader::Beginning);
+        reader.seek(0x1C, Athena::SeekOrigin::Begin);
 
-        Uint32 headerSize = reader.readUInt32();
+        Uint32 headerSize = reader.readUint32();
         if (headerSize != 0x1D)
-            throw zelda::error::InvalidOperationException("Invalid header size");
+            THROW_INVALID_DATA_EXCEPTION("Invalid header size");
 
         Uint32 oldPos = reader.position();
-        reader.seek(0x80, zelda::io::BinaryReader::End);
+        reader.seek(0x80, Athena::SeekOrigin::End);
         m_skipData = (char*)reader.readBytes(0x80);
-        reader.seek(oldPos, zelda::io::BinaryReader::Beginning);
+        reader.seek(oldPos, Athena::SeekOrigin::Begin);
         for (int i = 0; i < 3; i++)
         {
             char* data = (char*)reader.readBytes(0x53C0);
             char* skipData = new char[0x24];
             memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(this, data, skipData);
+            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(data, skipData);
 
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
             connect(sw, SIGNAL(copy(SkywardSwordEditorForm*)), this, SLOT(onCopy(SkywardSwordEditorForm*)));
@@ -477,18 +485,15 @@ bool SkywardSwordGameDocument::loadData(zelda::io::BinaryReader reader)
                 tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
         }
 
+        setDirty(false);
+        emit modified();
         return true;
     }
-    catch (zelda::error::Exception e)
+    catch (Athena::error::Exception e)
     {
-        // TODO: Add logger
-    }
-    catch (...)
-    {
-        return false;
+        qWarning() << QString::fromStdString(e.message());
     }
 
-    // Shouldn't happen, but just in case
     return false;
 }
 

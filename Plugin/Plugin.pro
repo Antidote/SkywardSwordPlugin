@@ -21,17 +21,17 @@ DEFINES += SKYWARDSWORDPLUGGIN_LIBRARY
 INCLUDEPATH += \
     include \
     ../PluginFramework/include \
-    ../libzelda/include \
+    ../../Athena/include \
     ../Updater/include
 
-QMAKE_CXXFLAGS = -std=c++0x
+QMAKE_CXXFLAGS = -std=c++11
 
 LIBS += \
     -L$$OUT_PWD/../PluginFramework -lpluginframework \
     -L$$OUT_PWD/../Updater -lupdater
 
 CONFIG(release, release|debug){
-    LIBS += -L$$OUT_PWD/../libzelda/lib -lzelda
+    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena
     DEFINES -= SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
@@ -42,7 +42,7 @@ CONFIG(release, release|debug){
 
 
 CONFIG(debug, debug|release){
-    LIBS += -L$$OUT_PWD/../libzelda/lib -lzelda-d
+    LIBS += -L$$OUT_PWD/../Athena/lib -lAthena-d
     DEFINES += SS_DEBUG
     # We don't want the objects, or MOC sources
     # in the project directory, so tell qmake
@@ -64,7 +64,8 @@ SOURCES += \
     src/SkywardSwordTabWidget.cpp \
     src/UpdateDialog.cpp \
     src/SkipDatabaseWidget.cpp \
-    src/SkipDatabaseElementEditor.cpp
+    src/SkipDatabaseElementEditor.cpp \
+    src/ImportExportQuestDialog.cpp
 
 HEADERS +=\
     include/SkywardSwordPlugin.hpp \
@@ -81,7 +82,8 @@ HEADERS +=\
     include/SkywardSwordTabWidget.hpp \
     include/UpdateDialog.hpp \
     include/SkipDatabaseWidget.hpp \
-    include/SkipDatabaseElementEditor.hpp
+    include/SkipDatabaseElementEditor.hpp \
+    include/ImportExportQuestDialog.hpp
 
 RESOURCES += \
     resources/resources.qrc
@@ -96,6 +98,7 @@ FORMS += \
     ui/CopyWidget.ui \
     ui/UpdateDialog.ui \
     ui/SkipDatabaseWidget.ui \
-    ui/SkipDatabaseElementEditor.ui
+    ui/SkipDatabaseElementEditor.ui \
+    ui/ImportExportQuestDialog.ui
 
 win32:RC_FILE += resources/resource.rc

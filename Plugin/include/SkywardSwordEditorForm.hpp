@@ -123,11 +123,6 @@ public:
         GoddessPlume
     };
 
-    // Default coords for new file
-    static const float DEFAULT_POS_X;
-    static const float DEFAULT_POS_Y;
-    static const float DEFAULT_POS_Z;
-
     enum Region
     {
         REGION_NTSCU = 0x45,
@@ -135,7 +130,7 @@ public:
         REGION_PAL   = 0x50
     };
 
-    explicit SkywardSwordEditorForm(SkywardSwordGameDocument* file, const char* data, const char* skipData, QWidget *parent = 0);
+    explicit SkywardSwordEditorForm(const char* data, const char* skipData, QWidget *parent = 0);
     ~SkywardSwordEditorForm();
 
     void setGameData(const QByteArray& data);
@@ -153,6 +148,7 @@ public slots:
     void onCopy();
     void onModified();
     void onCheckboxToggled();
+    void onImportExport();
 
     // Data
     // Play Stats
@@ -258,7 +254,9 @@ public slots:
     int gratitudeCrystals();
     void setGratitudeCrystals(int val);
 
-    bool isNew() const;
+    bool isCutsceneMode();
+    void setCutsceneMode(bool isCutsceneMode);
+    bool isNew();
     void setNew(bool isNew);
     int checksum();
     void updateChecksum();
@@ -286,7 +284,6 @@ private:
     void updateMaterials();
     void updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox);
     Ui::SkywardSwordEditorForm *ui;
-    SkywardSwordGameDocument* m_gameFile;
     char* m_gameData;
     char* m_skipData;
     quint32 m_skipChkColumn;
