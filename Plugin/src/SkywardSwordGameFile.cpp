@@ -75,6 +75,7 @@ SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader
             sw->setNew(true);
             tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
+            connect(sw, SIGNAL(copy(SkywardSwordEditorForm*)), this, SLOT(onCopy(SkywardSwordEditorForm*)));
         }
         setDirty(true);
     }

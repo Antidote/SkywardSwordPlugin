@@ -1476,6 +1476,8 @@ void SkywardSwordEditorForm::updateData()
     ui->checksumValueLbl->setText("0x" + QString("%1").arg((uint)checksum(), 8, 16, QChar('0')).toUpper());
     ui->skipChecksumValueLbl->setText("0x" + QString("%1").arg((uint)skipChecksum(), 8, 16, QChar('0')).toUpper());
     ui->tabWidget->setEnabled(!isNew());
+    ui->copyPushButton->setEnabled(!isNew());
+    ui->exportPushButton->setEnabled(!isNew());
 
     ui->cutsceneModeChkBox->setChecked(isCutsceneMode());
     // Play Stats
