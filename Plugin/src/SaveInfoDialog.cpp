@@ -17,7 +17,7 @@
 #include "ui_SaveInfoDialog.h"
 
 #include "SkywardSwordGameDocument.hpp"
-#include "SkywardSwordEditorForm.hpp"
+#include "SkywardSwordQuestEditorForm.hpp"
 
 #include <QFile>
 #include <QRadioButton>

@@ -15,7 +15,7 @@
 
 #include "ImportExportQuestDialog.hpp"
 #include "ui_ImportExportQuestDialog.h"
-#include "SkywardSwordEditorForm.hpp"
+#include "SkywardSwordQuestEditorForm.hpp"
 #include "SkywardSwordPlugin.hpp"
 #include <MainWindowBase.hpp>
 #include <Athena/ZQuestFile.hpp>

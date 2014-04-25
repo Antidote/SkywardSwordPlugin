@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#ifndef SKYWARDSWORDEDITORFORM_HPP
-#define SKYWARDSWORDEDITORFORM_HPP
+#ifndef SKYWARDSWORDQUESTEDITORFORM_HPP
+#define SKYWARDSWORDQUESTEDITORFORM_HPP
 
 #include <QWidget>
 #include <QDateTime>
@@ -286,5 +286,5 @@ private:
     QList<QCheckBox*> m_skipChkBoxes;
 };
 
-#endif // SKYWARDSWORDEDITORFORM_HPP
+#endif // SKYWARDSWORDQUESTEDITORFORM_HPP
 

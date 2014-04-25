@@ -14,7 +14,7 @@
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "SkywardSwordGameDocument.hpp"
-#include "SkywardSwordEditorForm.hpp"
+#include "SkywardSwordQuestEditorForm.hpp"
 #include "SkywardSwordWidget.hpp"
 #include "SkywardSwordTabWidget.hpp"
 #include "SkywardSwordPlugin.hpp"
@@ -22,9 +22,6 @@
 #include "SettingsManager.hpp"
 #include "SaveInfoDialog.hpp"
 
-#include <Athena/ZQuestFile.hpp>
-#include <Athena/ZQuestFileWriter.hpp>
-#include <Athena/ZQuestFileReader.hpp>
 #include <Athena/WiiSaveReader.hpp>
 #include <Athena/WiiSaveWriter.hpp>
 #include <Athena/WiiSave.hpp>
