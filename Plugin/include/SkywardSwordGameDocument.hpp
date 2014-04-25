@@ -18,9 +18,10 @@
 
 #include <GameDocument.hpp>
 #include <QObject>
+#include "Common.hpp"
 
 class CopyWidget;
-class SkywardSwordEditorForm;
+class SkywardSwordQuestEditorForm;
 namespace Athena
 {
 namespace io
@@ -43,14 +44,21 @@ public:
     bool reload();
     bool supportsWiiSave() const;
     bool exportWiiSave();
+
+    Region region();
+    void setRegion(Region region);
+
+    SkywardSwordQuestEditorForm* quest(quint32 index);
+    int currentQuestIndex();
+    SkywardSwordQuestEditorForm* currentQuest();
 private slots:
+    void onInfoButtonClicked();
     void onModified();
-    void onCopy(SkywardSwordEditorForm* source);
+    void onCopy(SkywardSwordQuestEditorForm* source);
     void onTabMoved(int left, int right);
 private:
     bool loadData(Athena::io::BinaryReader reader);
     char*       m_skipData;
-    char        m_region;
     CopyWidget* m_copyWidget;
 };
 

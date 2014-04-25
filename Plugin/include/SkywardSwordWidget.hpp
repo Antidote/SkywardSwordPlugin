@@ -13,25 +13,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#ifndef UPDATEDIALOG_HPP
-#define UPDATEDIALOG_HPP
+#ifndef SKYWARDSWORDWIDGET_H
+#define SKYWARDSWORDWIDGET_H
 
-#include <QDialog>
+#include <QWidget>
+#include "Common.hpp"
 
-namespace Ui {
-class UpdateDialog;
+namespace Ui{
+class SkywardSwordWidget;
 }
 
-class UpdateDialog : public QDialog
+class QAbstractButton;
+
+class SkywardSwordTabWidget;
+
+class SkywardSwordWidget : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit UpdateDialog(QWidget *parent = 0);
-    ~UpdateDialog();
+    explicit SkywardSwordWidget(QWidget *parent = 0);
 
+    SkywardSwordTabWidget* tabWidget() const;
+
+    void setRegion(Region region);
+    Region region() const;
+signals:
+    void regionChanged(Region);
+    void infoButtonClicked();
+public slots:
+    void onButtonClicked(QAbstractButton* btn, bool val);
 private:
-    Ui::UpdateDialog *ui;
+    Ui::SkywardSwordWidget* ui;
 };
 
-#endif // UPDATEDIALOG_HPP
+#endif // SKYWARDSWORDWIDGET_H

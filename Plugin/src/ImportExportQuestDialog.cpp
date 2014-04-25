@@ -1,17 +1,17 @@
-// This file is part of WiiKing2 Editor.
+// This file is part of Sakura Suite.
 //
-// WiiKing2 Editor is free software: you can redistribute it and/or modify
+// Sakura Suite is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Wiiking2 Editor is distributed in the hope that it will be useful,
+// Sakura Suite is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with WiiKing2 Editor.  If not, see <http://www.gnu.org/licenses/>
+// along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "ImportExportQuestDialog.hpp"
 #include "ui_ImportExportQuestDialog.h"
@@ -38,7 +38,7 @@ ImportExportQuestDialog::ImportExportQuestDialog(QWidget *parent, Mode mode) :
     m_quest(NULL)
 {
     ui->setupUi(this);
-    SkywardSwordEditorForm* editorForm = qobject_cast<SkywardSwordEditorForm*>(this->parent());
+    SkywardSwordQuestEditorForm* editorForm = qobject_cast<SkywardSwordQuestEditorForm*>(this->parent());
     ui->statusLabel->clear();
     if (editorForm)
     {
@@ -100,14 +100,16 @@ void ImportExportQuestDialog::onPathPressed()
                 ExportFmt* data = (ExportFmt*)m_quest->data();
                 char* gameData = new char[0x53C0];
                 char* skipData = new char[0x24];
+
                 memcpy(gameData, data->GameData, 0x53C0);
+                Region region = (Region)(qFromBigEndian(*(quint32*)gameData) & 0x000000FF);
 
                 if (m_quest->length() == 0x53E4)
                     memcpy(skipData, data->SkipData, 0x24);
                 else
                     memset(skipData, 0, 0x24);
 
-                SkywardSwordEditorForm game(gameData, skipData);
+                SkywardSwordQuestEditorForm game(gameData, skipData, region);
                 ui->nameLineEdit->setText(game.playerName());
                 ui->rupeeSpinBox->setValue(game.rupees());
                 ui->hpCurrentSpinBox->setValue(game.currentHP());
@@ -133,7 +135,7 @@ void ImportExportQuestDialog::onPathPressed()
 
 void ImportExportQuestDialog::accept()
 {
-    SkywardSwordEditorForm* editorForm = qobject_cast<SkywardSwordEditorForm*>(parent());
+    SkywardSwordQuestEditorForm* editorForm = qobject_cast<SkywardSwordQuestEditorForm*>(parent());
 
     if (editorForm)
     {

@@ -29,7 +29,7 @@ namespace Ui {
 class SkywardSwordEditorForm;
 }
 
-class SkywardSwordEditorForm : public QWidget
+class SkywardSwordQuestEditorForm : public QWidget
 {
     Q_OBJECT
 public:
@@ -123,15 +123,8 @@ public:
         GoddessPlume
     };
 
-    enum Region
-    {
-        REGION_NTSCU = 0x45,
-        REGION_NTSCJ = 0x4A,
-        REGION_PAL   = 0x50
-    };
-
-    explicit SkywardSwordEditorForm(const char* data, const char* skipData, QWidget *parent = 0);
-    ~SkywardSwordEditorForm();
+    explicit SkywardSwordQuestEditorForm(const char* data, const char* skipData, Region region, QWidget *paren=0);
+    ~SkywardSwordQuestEditorForm();
 
     void setGameData(const QByteArray& data);
     char* gameData() const;
@@ -149,6 +142,7 @@ public slots:
     void onModified();
     void onCheckboxToggled();
     void onImportExport();
+    void setRegion(Region region);
 
     // Data
     // Play Stats
@@ -259,7 +253,7 @@ public slots:
     bool isNew();
     void setNew(bool isNew);
     int checksum();
-    void updateChecksum();
+    void updateQuestChecksum();
     int skipChecksum();
     void updateSkipChecksum();
 
@@ -267,7 +261,7 @@ public slots:
     void clearAllSkips();
 signals:
     void modified();
-    void copy(SkywardSwordEditorForm*);
+    void copy(SkywardSwordQuestEditorForm*);
 
 private slots:
     void buildSkipTab();
@@ -284,6 +278,7 @@ private:
     void updateMaterials();
     void updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox);
     Ui::SkywardSwordEditorForm *ui;
+    Region m_region;
     char* m_gameData;
     char* m_skipData;
     quint32 m_skipChkColumn;

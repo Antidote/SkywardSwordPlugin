@@ -71,16 +71,20 @@ void SettingsDialog::loadSettings()
     ui->settingsTab->setCurrentIndex(0);
     switch(settings->defaultRegion())
     {
-        case SettingsManager::NTSCU: ui->ntscURB->setChecked(true); break;
-        case SettingsManager::NTSCJ: ui->ntscJRB->setChecked(true); break;
-        case SettingsManager::PAL:   ui->palRB  ->setChecked(true); break;
+    case Region::NTSCU: ui->ntscURB->setChecked(true); break;
+    case Region::NTSCK: ui->ntscKRB->setChecked(true); break;
+    case Region::NTSCJ: ui->ntscJRB->setChecked(true); break;
+    case Region::PAL:   ui->palRB  ->setChecked(true); break;
+    default: break;
     }
 
-    ui->ntscUNameLE      ->setText(settings->defaultPlayerNameForRegion(SettingsManager::NTSCU));
+    ui->ntscUNameLE      ->setText(settings->defaultPlayerNameForRegion(Region::NTSCU));
     ui->ntscUNameLE      ->setModified(false);
-    ui->ntscJNameLE      ->setText(settings->defaultPlayerNameForRegion(SettingsManager::NTSCJ));
+    ui->ntscKNameLE      ->setText(settings->defaultPlayerNameForRegion(Region::NTSCK));
+    ui->ntscKNameLE      ->setModified(false);
+    ui->ntscJNameLE      ->setText(settings->defaultPlayerNameForRegion(Region::NTSCJ));
     ui->ntscJNameLE      ->setModified(false);
-    ui->palNameLE        ->setText(settings->defaultPlayerNameForRegion(SettingsManager::PAL  ));
+    ui->palNameLE        ->setText(settings->defaultPlayerNameForRegion(Region::PAL  ));
     ui->palNameLE        ->setModified(false);
     ui->updateUrlLineEdit->setText(settings->updateUrl());
     ui->updateUrlLineEdit->setModified(false);
@@ -91,22 +95,30 @@ void SettingsDialog::accept()
 {
     SettingsManager* settings = SettingsManager::instance();
 
-    QString regionBtn = ui->regionBtnGrp->checkedButton()->objectName();
-    settings->setDefaultRegion(regionBtn == "ntscURB" ? SettingsManager::NTSCU :
-                              (regionBtn == "ntscJRB" ? SettingsManager::NTSCJ :
-                               SettingsManager::PAL));
+    const QAbstractButton* regionBtn = ui->regionBtnGrp->checkedButton();
+    if (regionBtn == ui->ntscURB)
+        settings->setDefaultRegion(Region::NTSCU);
+    else if (regionBtn == ui->ntscKRB)
+        settings->setDefaultRegion(Region::NTSCK);
+    else if (regionBtn == ui->ntscJRB)
+        settings->setDefaultRegion(Region::NTSCJ);
+    else if (regionBtn == ui->palRB)
+        settings->setDefaultRegion(Region::PAL);
 
     if (ui->ntscUNameLE->isModified() && !ui->ntscUNameLE->text().isEmpty())
-        settings->setDefaultPlayerNameForRegion(SettingsManager::NTSCU, ui->ntscUNameLE->text());
+        settings->setDefaultPlayerNameForRegion(Region::NTSCU, ui->ntscUNameLE->text());
+    if (ui->ntscKNameLE->isModified() && !ui->ntscKNameLE->text().isEmpty())
+        settings->setDefaultPlayerNameForRegion(Region::NTSCK, ui->ntscKNameLE->text());
     if (ui->ntscJNameLE->isModified() && !ui->ntscJNameLE->text().isEmpty())
-        settings->setDefaultPlayerNameForRegion(SettingsManager::NTSCJ, ui->ntscJNameLE->text());
+        settings->setDefaultPlayerNameForRegion(Region::NTSCJ, ui->ntscJNameLE->text());
     if (ui->palNameLE->isModified() && !ui->palNameLE->text().isEmpty())
-        settings->setDefaultPlayerNameForRegion(SettingsManager::PAL, ui->palNameLE->text());
+        settings->setDefaultPlayerNameForRegion(Region::PAL, ui->palNameLE->text());
     if (ui->updateUrlLineEdit->isModified() && !ui->updateUrlLineEdit->text().isEmpty())
         settings->setUpdateUrl(ui->updateUrlLineEdit->text());
     settings->setUpdateCheckOnStart(ui->checkOnStart->isChecked());
     SkipDatabaseWidget* sdw = qobject_cast<SkipDatabaseWidget*>(ui->skipDatabaseTab);
     sdw->saveDatabase();
+    settings->saveSettings();
     QDialog::accept();
 }
 

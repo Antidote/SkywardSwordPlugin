@@ -112,6 +112,8 @@
     <qresource prefix="/BannerData">
         <file alias="E/subtitle.bin">BannerData/E/subtitle.bin</file>
         <file alias="E/title.bin">BannerData/E/title.bin</file>
+        <file alias="K/subtitle.bin">BannerData/K/subtitle.bin</file>
+        <file alias="K/title.bin">BannerData/K/title.bin</file>
         <file alias="J/subtitle.bin">BannerData/J/subtitle.bin</file>
         <file alias="J/title.bin">BannerData/J/title.bin</file>
         <file alias="P/subtitle.bin">BannerData/P/subtitle.bin</file>

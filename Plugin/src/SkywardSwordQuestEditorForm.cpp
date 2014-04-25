@@ -13,11 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#include "SkywardSwordEditorForm.hpp"
+#include "SkywardSwordQuestEditorForm.hpp"
 #include "ui_SkywardSwordEditorForm.h"
-#include "SkywardSwordGameFile.hpp"
+#include "SkywardSwordGameDocument.hpp"
 #include "SettingsManager.hpp"
 #include "SkywardSwordPlugin.hpp"
+#include "SkywardSwordWidget.hpp"
 #include "SettingsDialog.hpp"
 #include "Constants.hpp"
 
@@ -27,9 +28,10 @@
 #include <QSpacerItem>
 #include <ImportExportQuestDialog.hpp>
 
-SkywardSwordEditorForm::SkywardSwordEditorForm(const char *data, const char* skipData, QWidget *parent)
+SkywardSwordQuestEditorForm::SkywardSwordQuestEditorForm(const char *data, const char* skipData, Region region, QWidget* parent)
     : QWidget(parent),
       ui(new Ui::SkywardSwordEditorForm),
+      m_region(region),
       m_gameData((char*)data),
       m_skipData((char*)skipData),
       m_skipChkColumn(0),
@@ -40,6 +42,8 @@ SkywardSwordEditorForm::SkywardSwordEditorForm(const char *data, const char* ski
     ui->tabWidget->setCurrentIndex(0);
     connect(this, SIGNAL(modified()), this, SLOT(onModified()));
     updateData();
+    updateQuestChecksum();
+    updateSkipChecksum();
 
     buildSkipTab();
 
@@ -56,7 +60,7 @@ SkywardSwordEditorForm::SkywardSwordEditorForm(const char *data, const char* ski
 #endif
 }
 
-SkywardSwordEditorForm::~SkywardSwordEditorForm()
+SkywardSwordQuestEditorForm::~SkywardSwordQuestEditorForm()
 {
     //    m_skipChkBoxes.clear();
     delete[] m_gameData;
@@ -66,7 +70,7 @@ SkywardSwordEditorForm::~SkywardSwordEditorForm()
     delete ui;
 }
 
-void SkywardSwordEditorForm::setGameData(const QByteArray& data)
+void SkywardSwordQuestEditorForm::setGameData(const QByteArray& data)
 {
     if (data.size() != 0x53C0)
     {
@@ -77,33 +81,33 @@ void SkywardSwordEditorForm::setGameData(const QByteArray& data)
     emit modified();
 }
 
-char* SkywardSwordEditorForm::gameData() const
+char* SkywardSwordQuestEditorForm::gameData() const
 {
     return m_gameData;
 }
 
-void SkywardSwordEditorForm::setSkipData(const QByteArray& data)
+void SkywardSwordQuestEditorForm::setSkipData(const QByteArray& data)
 {
     memcpy(m_skipData, data.data(), data.size());
     emit modified();
 }
 
-char* SkywardSwordEditorForm::skipData() const
+char* SkywardSwordQuestEditorForm::skipData() const
 {
     return m_skipData;
 }
 
-int SkywardSwordEditorForm::currentTab()
+int SkywardSwordQuestEditorForm::currentTab()
 {
     return ui->tabWidget->currentIndex();
 }
 
-void SkywardSwordEditorForm::setCurrentTab(int index)
+void SkywardSwordQuestEditorForm::setCurrentTab(int index)
 {
     ui->tabWidget->setCurrentIndex(index);
 }
 
-void SkywardSwordEditorForm::onDelete()
+void SkywardSwordQuestEditorForm::onDelete()
 {
     QMessageBox mbox(this);
     mbox.setWindowTitle("Are you sure?");
@@ -121,10 +125,11 @@ void SkywardSwordEditorForm::onDelete()
     emit modified();
 }
 
-void SkywardSwordEditorForm::onCreate()
+void SkywardSwordQuestEditorForm::onCreate()
 {
     memset(m_gameData, 0x00, 0x53C0);
-    setPlayerName(SkywardSwordPlugin::instance()->settings()->defaultPlayerName());
+    memset(m_skipData, 0x00, 0x24);
+    setPlayerName(SkywardSwordPlugin::instance()->settings()->defaultPlayerNameForRegion(m_region));
     setCurrentMap("F405");
     setCutsceneMode(true);
     ui->saveTimeEdit->setDateTime(QDateTime::currentDateTime());
@@ -134,25 +139,28 @@ void SkywardSwordEditorForm::onCreate()
     emit modified();
 }
 
-void SkywardSwordEditorForm::onCopy()
+void SkywardSwordQuestEditorForm::onCopy()
 {
     emit copy(this);
 }
 
-void SkywardSwordEditorForm::onModified()
+void SkywardSwordQuestEditorForm::onModified()
 {
     if (!this->updatesEnabled())
         return;
 
     this->setUpdatesEnabled(false);
-    updateChecksum();
+    updateQuestChecksum();
     updateSkipChecksum();
     updateData();
     this->setUpdatesEnabled(true);
 }
 
-void SkywardSwordEditorForm::onCheckboxToggled()
+void SkywardSwordQuestEditorForm::onCheckboxToggled()
 {
+    if (!this->updatesEnabled())
+        return;
+
     QCheckBox* chkBox = qobject_cast<QCheckBox*>(sender());
 
     if (!chkBox)
@@ -172,7 +180,7 @@ void SkywardSwordEditorForm::onCheckboxToggled()
     }
 }
 
-void SkywardSwordEditorForm::onImportExport()
+void SkywardSwordQuestEditorForm::onImportExport()
 {
     if (sender() == ui->importPushButton)
     {
@@ -186,7 +194,12 @@ void SkywardSwordEditorForm::onImportExport()
     }
 }
 
-Playtime SkywardSwordEditorForm::playtime() const
+void SkywardSwordQuestEditorForm::setRegion(Region region)
+{
+    m_region = region;
+}
+
+Playtime SkywardSwordQuestEditorForm::playtime() const
 {
     if (!m_gameData)
         return Playtime();
@@ -198,7 +211,7 @@ Playtime SkywardSwordEditorForm::playtime() const
     return playTime;
 }
 
-void SkywardSwordEditorForm::setPlaytime(Playtime val)
+void SkywardSwordQuestEditorForm::setPlaytime(Playtime val)
 {
     quint64 totalSeconds = 0;
     totalSeconds += ( val.Hours   * 60) * 60;
@@ -209,7 +222,7 @@ void SkywardSwordEditorForm::setPlaytime(Playtime val)
     emit modified();
 }
 
-QDateTime SkywardSwordEditorForm::savetime() const
+QDateTime SkywardSwordQuestEditorForm::savetime() const
 {
     if (!m_gameData)
         return QDateTime::currentDateTime();
@@ -217,7 +230,7 @@ QDateTime SkywardSwordEditorForm::savetime() const
     return fromWiiTime(qFromBigEndian(*(quint64*)(m_gameData + 0x0008))).addSecs(-(60*60));
 }
 
-void SkywardSwordEditorForm::setSavetime(const QDateTime& time)
+void SkywardSwordQuestEditorForm::setSavetime(const QDateTime& time)
 {
     if (!m_gameData)
         return;
@@ -228,12 +241,12 @@ void SkywardSwordEditorForm::setSavetime(const QDateTime& time)
     emit modified();
 }
 
-QString SkywardSwordEditorForm::currentMap() const
+QString SkywardSwordQuestEditorForm::currentMap() const
 {
     return QString::fromLatin1(m_gameData + 0x531C);
 }
 
-void SkywardSwordEditorForm::setCurrentMap(const QString& map)
+void SkywardSwordQuestEditorForm::setCurrentMap(const QString& map)
 {
     if (map == currentMap())
         return;
@@ -245,12 +258,12 @@ void SkywardSwordEditorForm::setCurrentMap(const QString& map)
     emit modified();
 }
 
-QString SkywardSwordEditorForm::currentArea() const
+QString SkywardSwordQuestEditorForm::currentArea() const
 {
     return QString::fromLatin1(m_gameData + 0x533C);
 }
 
-void SkywardSwordEditorForm::setCurrentArea(const QString& area)
+void SkywardSwordQuestEditorForm::setCurrentArea(const QString& area)
 {
     if (area == currentArea())
         return;
@@ -262,12 +275,12 @@ void SkywardSwordEditorForm::setCurrentArea(const QString& area)
     emit modified();
 }
 
-QString SkywardSwordEditorForm::currentRoom() const
+QString SkywardSwordQuestEditorForm::currentRoom() const
 {
     return QString::fromLatin1(m_gameData + 0x535C);
 }
 
-void SkywardSwordEditorForm::setCurrentRoom(const QString& room)
+void SkywardSwordQuestEditorForm::setCurrentRoom(const QString& room)
 {
     if (room == currentRoom())
         return;
@@ -278,12 +291,12 @@ void SkywardSwordEditorForm::setCurrentRoom(const QString& room)
     emit modified();
 }
 
-int SkywardSwordEditorForm::roomID() const
+int SkywardSwordQuestEditorForm::roomID() const
 {
     return (uint)(*(uchar*)(m_gameData + 0x5309));
 }
 
-void SkywardSwordEditorForm::setRoomID(int id)
+void SkywardSwordQuestEditorForm::setRoomID(int id)
 {
     if (id == roomID())
         return;
@@ -292,12 +305,12 @@ void SkywardSwordEditorForm::setRoomID(int id)
     emit modified();
 }
 
-bool SkywardSwordEditorForm::watchedIntro()
+bool SkywardSwordQuestEditorForm::watchedIntro()
 {
     return flag(0x0941, 0x02);
 }
 
-void SkywardSwordEditorForm::setIntroWatched(bool val)
+void SkywardSwordQuestEditorForm::setIntroWatched(bool val)
 {
     if (val == watchedIntro())
         return;
@@ -305,12 +318,12 @@ void SkywardSwordEditorForm::setIntroWatched(bool val)
     setFlag(0x0941, 0x02, val);
 }
 
-bool SkywardSwordEditorForm::isNight()
+bool SkywardSwordQuestEditorForm::isNight()
 {
     return flag(0x53B3, 0x01);
 }
 
-void SkywardSwordEditorForm::setNight(bool val)
+void SkywardSwordQuestEditorForm::setNight(bool val)
 {
     if (val == isNight())
         return;
@@ -318,17 +331,17 @@ void SkywardSwordEditorForm::setNight(bool val)
     setFlag(0x53B3, 0x01, val);
 }
 
-bool SkywardSwordEditorForm::isHeroMode()
+bool SkywardSwordQuestEditorForm::isHeroMode()
 {
     return flag(0x08FE, 0x08);
 }
 
-void SkywardSwordEditorForm::setHeroMode(bool val)
+void SkywardSwordQuestEditorForm::setHeroMode(bool val)
 {
     setFlag(0x08FE, 0x08, val);
 }
 
-QString SkywardSwordEditorForm::playerName() const
+QString SkywardSwordQuestEditorForm::playerName() const
 {
     if (!m_gameData)
         return QString("");
@@ -347,7 +360,7 @@ QString SkywardSwordEditorForm::playerName() const
     return QString(QString::fromUtf16(tmpName));
 }
 
-void SkywardSwordEditorForm::setPlayerName(const QString &name)
+void SkywardSwordQuestEditorForm::setPlayerName(const QString &name)
 {
     if (!m_gameData)
         return;
@@ -369,7 +382,7 @@ void SkywardSwordEditorForm::setPlayerName(const QString &name)
     emit modified();
 }
 
-quint32 SkywardSwordEditorForm::rupees() const
+quint32 SkywardSwordQuestEditorForm::rupees() const
 {
     if (!m_gameData)
         return 0;
@@ -377,7 +390,7 @@ quint32 SkywardSwordEditorForm::rupees() const
     return qFromBigEndian(*(quint16*)(m_gameData + 0x0A5E));
 }
 
-void SkywardSwordEditorForm::setRupees(int val)
+void SkywardSwordQuestEditorForm::setRupees(int val)
 {
     if (!m_gameData)
         return;
@@ -389,12 +402,12 @@ void SkywardSwordEditorForm::setRupees(int val)
     emit modified();
 }
 
-int SkywardSwordEditorForm::totalHP()
+int SkywardSwordQuestEditorForm::totalHP()
 {
     return (int)qFromBigEndian(*(quint16*)(m_gameData + 0x5302));
 }
 
-void SkywardSwordEditorForm::setTotalHP(int val)
+void SkywardSwordQuestEditorForm::setTotalHP(int val)
 {
     if (val == totalHP())
         return;
@@ -403,12 +416,12 @@ void SkywardSwordEditorForm::setTotalHP(int val)
     emit modified();
 }
 
-quint32 SkywardSwordEditorForm::unkHP()
+quint32 SkywardSwordQuestEditorForm::unkHP()
 {
     return (int)qFromBigEndian(*(quint16*)(m_gameData + 0x5304));
 }
 
-void SkywardSwordEditorForm::setUnkHP(int val)
+void SkywardSwordQuestEditorForm::setUnkHP(int val)
 {
     if (val == (int)unkHP())
         return;
@@ -417,12 +430,12 @@ void SkywardSwordEditorForm::setUnkHP(int val)
     emit modified();
 }
 
-quint32 SkywardSwordEditorForm::currentHP()
+quint32 SkywardSwordQuestEditorForm::currentHP()
 {
     return (int)qFromBigEndian(*(quint16*)(m_gameData + 0x5306));
 }
 
-void SkywardSwordEditorForm::setCurrentHP(int val)
+void SkywardSwordQuestEditorForm::setCurrentHP(int val)
 {
     if (val == (int)currentHP())
         return;
@@ -431,68 +444,104 @@ void SkywardSwordEditorForm::setCurrentHP(int val)
     emit modified();
 }
 
-float SkywardSwordEditorForm::player(Coord coord)
+float SkywardSwordQuestEditorForm::player(Coord coord)
 {
+    float x     = *(float*)(m_gameData + 0x0010);
+    float y     = *(float*)(m_gameData + 0x0014);
+    float z     = *(float*)(m_gameData + 0x0018);
+    float roll  = *(float*)(m_gameData + 0x001C);
+    float pitch = *(float*)(m_gameData + 0x0020);
+    float yaw   = *(float*)(m_gameData + 0x0024);
+    if (!Athena::utility::isSystemBigEndian())
+    {
+        x = Athena::utility::swapFloat(x);
+        y = Athena::utility::swapFloat(y);
+        z = Athena::utility::swapFloat(z);
+        roll = Athena::utility::swapFloat(roll);
+        pitch = Athena::utility::swapFloat(pitch);
+        yaw = Athena::utility::swapFloat(yaw);
+    }
+
     switch(coord)
     {
-        case XCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0010));
-        case YCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0014));
-        case ZCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0018));
-        case RollCoord: return Athena::utility::swapFloat(*(float*)(m_gameData + 0x001C));
-        case PitchCoord:return Athena::utility::swapFloat(*(float*)(m_gameData + 0x001C));
-        case YawCoord:  return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0024));
+        case XCoord:    return x;
+        case YCoord:    return y;
+        case ZCoord:    return z;
+        case RollCoord: return roll;
+        case PitchCoord:return pitch;
+        case YawCoord:  return yaw;
         default:        return 0.f;
     }
 }
 
-float SkywardSwordEditorForm::camera(Coord coord)
+float SkywardSwordQuestEditorForm::camera(Coord coord)
 {
+    float x     = *(float*)(m_gameData + 0x0028);
+    float y     = *(float*)(m_gameData + 0x002C);
+    float z     = *(float*)(m_gameData + 0x0030);
+    float roll  = *(float*)(m_gameData + 0x0034);
+    float pitch = *(float*)(m_gameData + 0x0038);
+    float yaw   = *(float*)(m_gameData + 0x003C);
+    if (!Athena::utility::isSystemBigEndian())
+    {
+        x     = Athena::utility::swapFloat(x);
+        y     = Athena::utility::swapFloat(y);
+        z     = Athena::utility::swapFloat(z);
+        roll  = Athena::utility::swapFloat(roll);
+        pitch = Athena::utility::swapFloat(pitch);
+        yaw   = Athena::utility::swapFloat(yaw);
+    }
+
     switch(coord)
     {
-        case XCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0028));
-        case YCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x002C));
-        case ZCoord:    return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0030));
-        case RollCoord: return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0034));
-        case PitchCoord:return Athena::utility::swapFloat(*(float*)(m_gameData + 0x0038));
-        case YawCoord:  return Athena::utility::swapFloat(*(float*)(m_gameData + 0x003C));
+        case XCoord:    return x;
+        case YCoord:    return y;
+        case ZCoord:    return z;
+        case RollCoord: return roll;
+        case PitchCoord:return pitch;
+        case YawCoord:  return yaw;
         default:        return 0.f;
     }
 }
 
-void SkywardSwordEditorForm::setCoord(double val)
+void SkywardSwordQuestEditorForm::setCoord(double val)
 {
     if (!updatesEnabled())
         return;
 
+    float coord = (float)val;
+    if (!Athena::utility::isSystemBigEndian())
+        coord = Athena::utility::swapFloat(coord);
+
     if (sender() == ui->playerXSpinBox)
-        *(float*)(m_gameData + 0x0010) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0010) = coord;
     if (sender() == ui->playerYSpinBox)
-        *(float*)(m_gameData + 0x0014) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0014) = coord;
     if (sender() == ui->playerZSpinBox)
-        *(float*)(m_gameData + 0x0018) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0018) = coord;
     if (sender() == ui->playerRollSpinBox)
-        *(float*)(m_gameData + 0x001C) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x001C) = coord;
     if (sender() == ui->playerPitchSpinBox)
-        *(float*)(m_gameData + 0x0020) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0020) = coord;
     if (sender() == ui->playerYawSpinBox)
-        *(float*)(m_gameData + 0x0024) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0024) = coord;
     if (sender() == ui->cameraXSpinBox)
-        *(float*)(m_gameData + 0x0028) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0028) = coord;
     if (sender() == ui->cameraYSpinBox)
-        *(float*)(m_gameData + 0x002C) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x002C) = coord;
     if (sender() == ui->cameraZSpinBox)
-        *(float*)(m_gameData + 0x0030) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0030) = coord;
     if (sender() == ui->cameraRollSpinBox)
-        *(float*)(m_gameData + 0x0034) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0034) = coord;
     if (sender() == ui->cameraPitchSpinBox)
-        *(float*)(m_gameData + 0x0038) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x0038) = coord;
     if (sender() == ui->cameraYawSpinBox)
-        *(float*)(m_gameData + 0x003C) = Athena::utility::swapFloat(val);
+        *(float*)(m_gameData + 0x003C) = coord;
 
     emit modified();
 }
 
-bool SkywardSwordEditorForm::beetle(BeetleType type)
+bool SkywardSwordQuestEditorForm::beetle(BeetleType type)
 {
     switch(type)
     {
@@ -504,7 +553,7 @@ bool SkywardSwordEditorForm::beetle(BeetleType type)
     }
 }
 
-void SkywardSwordEditorForm::setBeetle(bool val)
+void SkywardSwordQuestEditorForm::setBeetle(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -544,7 +593,7 @@ void SkywardSwordEditorForm::setBeetle(bool val)
     }
 }
 
-bool SkywardSwordEditorForm::bow(BowType bow)
+bool SkywardSwordQuestEditorForm::bow(BowType bow)
 {
     switch (bow)
     {
@@ -555,7 +604,7 @@ bool SkywardSwordEditorForm::bow(BowType bow)
     }
 }
 
-void SkywardSwordEditorForm::setBow(bool val)
+void SkywardSwordQuestEditorForm::setBow(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -586,7 +635,7 @@ void SkywardSwordEditorForm::setBow(bool val)
     }
 }
 
-bool SkywardSwordEditorForm::bugnet(SkywardSwordEditorForm::BugnetType type)
+bool SkywardSwordQuestEditorForm::bugnet(SkywardSwordQuestEditorForm::BugnetType type)
 {
     switch(type)
     {
@@ -596,7 +645,7 @@ bool SkywardSwordEditorForm::bugnet(SkywardSwordEditorForm::BugnetType type)
     }
 }
 
-void SkywardSwordEditorForm::setBugnet(bool val)
+void SkywardSwordQuestEditorForm::setBugnet(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -617,49 +666,49 @@ void SkywardSwordEditorForm::setBugnet(bool val)
     }
 }
 
-bool SkywardSwordEditorForm::gustBellows()
+bool SkywardSwordQuestEditorForm::gustBellows()
 {
     return flag(0x09E6, 0x02);
 }
 
-void SkywardSwordEditorForm::setGustBellows(bool val)
+void SkywardSwordQuestEditorForm::setGustBellows(bool val)
 {
     if (!updatesEnabled())
         return;
     setFlag(0x09E6, 0x02, val);
 }
 
-bool SkywardSwordEditorForm::goddessHarp()
+bool SkywardSwordQuestEditorForm::goddessHarp()
 {
 
     return flag(0x09F4, 0x02);
 }
 
-void SkywardSwordEditorForm::setGoddessHarp(bool val)
+void SkywardSwordQuestEditorForm::setGoddessHarp(bool val)
 {
     if (!updatesEnabled())
         return;
     setFlag(0x09F4, 0x02, val);
 }
 
-bool SkywardSwordEditorForm::whip()
+bool SkywardSwordQuestEditorForm::whip()
 {
     return flag(0x09F3, 0x10);
 }
 
-void SkywardSwordEditorForm::setWhip(bool val)
+void SkywardSwordQuestEditorForm::setWhip(bool val)
 {
     if (!updatesEnabled())
         return;
     setFlag(0x09F3, 0x10, val);
 }
 
-bool SkywardSwordEditorForm::clawshot()
+bool SkywardSwordQuestEditorForm::clawshot()
 {
     return flag(0x09E4, 0x20);
 }
 
-void SkywardSwordEditorForm::setClawshot(bool val)
+void SkywardSwordQuestEditorForm::setClawshot(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -667,12 +716,12 @@ void SkywardSwordEditorForm::setClawshot(bool val)
     setFlag(0x09E4, 0x20, val);
 }
 
-bool SkywardSwordEditorForm::diggingMitts()
+bool SkywardSwordQuestEditorForm::diggingMitts()
 {
     return flag(0x09E6, 0x40);
 }
 
-void SkywardSwordEditorForm::setDiggingMitts(bool val)
+void SkywardSwordQuestEditorForm::setDiggingMitts(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -683,12 +732,12 @@ void SkywardSwordEditorForm::setDiggingMitts(bool val)
     setFlag(0x09E6, 0x40, val);
 }
 
-bool SkywardSwordEditorForm::moleMitts()
+bool SkywardSwordQuestEditorForm::moleMitts()
 {
     return flag(0x09EC, 0x02);
 }
 
-void SkywardSwordEditorForm::setMoleMitts(bool val)
+void SkywardSwordQuestEditorForm::setMoleMitts(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -699,47 +748,47 @@ void SkywardSwordEditorForm::setMoleMitts(bool val)
     setFlag(0x09EC, 0x02, val);
 }
 
-bool SkywardSwordEditorForm::sailCloth()
+bool SkywardSwordQuestEditorForm::sailCloth()
 {
     return flag(0x09F4, 0x01);
 }
 
-void SkywardSwordEditorForm::setSailCloth(bool val)
+void SkywardSwordQuestEditorForm::setSailCloth(bool val)
 {
     setFlag(0x09F4, 0x01, val);
 }
 
-bool SkywardSwordEditorForm::waterDragonScale()
+bool SkywardSwordQuestEditorForm::waterDragonScale()
 {
     return flag(0x09E9, 0x20);
 }
 
-void SkywardSwordEditorForm::setWaterDragonScale(bool val)
+void SkywardSwordQuestEditorForm::setWaterDragonScale(bool val)
 {
     setFlag(0x09E9, 0x20, val);
 }
 
-bool SkywardSwordEditorForm::fireShieldEarings()
+bool SkywardSwordQuestEditorForm::fireShieldEarings()
 {
     return flag(0x09F3, 0x20);
 }
 
-void SkywardSwordEditorForm::setFireShieldEarings(bool val)
+void SkywardSwordQuestEditorForm::setFireShieldEarings(bool val)
 {
     setFlag(0x09F3, 0x20, val);
 }
 
-bool SkywardSwordEditorForm::bombs()
+bool SkywardSwordQuestEditorForm::bombs()
 {
     return flag(0x09ED, 0x04);
 }
 
-void SkywardSwordEditorForm::setBombs(bool val)
+void SkywardSwordQuestEditorForm::setBombs(bool val)
 {
     setFlag(0x09ED, 0x04, val);
 }
 
-bool SkywardSwordEditorForm::slingshot(SlingshotType type)
+bool SkywardSwordQuestEditorForm::slingshot(SlingshotType type)
 {
     switch(type)
     {
@@ -749,7 +798,7 @@ bool SkywardSwordEditorForm::slingshot(SlingshotType type)
     }
 }
 
-void SkywardSwordEditorForm::setSlingshot(bool val)
+void SkywardSwordQuestEditorForm::setSlingshot(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -771,7 +820,7 @@ void SkywardSwordEditorForm::setSlingshot(bool val)
     }
 }
 
-int SkywardSwordEditorForm::ammo(SkywardSwordEditorForm::AmmoType type)
+int SkywardSwordQuestEditorForm::ammo(SkywardSwordQuestEditorForm::AmmoType type)
 {
     // Nintendo uses an interesting encoding for the ammo counts
     // 11111111 00111111 10000000 00111111
@@ -793,7 +842,7 @@ int SkywardSwordEditorForm::ammo(SkywardSwordEditorForm::AmmoType type)
     return ret;
 }
 
-void SkywardSwordEditorForm::setAmmo(int val)
+void SkywardSwordQuestEditorForm::setAmmo(int val)
 {
     if (!updatesEnabled())
         return;
@@ -823,12 +872,12 @@ void SkywardSwordEditorForm::setAmmo(int val)
     emit modified();
 }
 
-bool SkywardSwordEditorForm::practiceSword()
+bool SkywardSwordQuestEditorForm::practiceSword()
 {
     return flag(0x09F2, 0x01);
 }
 
-void SkywardSwordEditorForm::setPracticeSword(bool val)
+void SkywardSwordQuestEditorForm::setPracticeSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -839,12 +888,12 @@ void SkywardSwordEditorForm::setPracticeSword(bool val)
     setFlag(0x09F2, 0x01, val);
 }
 
-bool SkywardSwordEditorForm::goddessSword()
+bool SkywardSwordQuestEditorForm::goddessSword()
 {
     return flag(0x09E4, 0x01);
 }
 
-void SkywardSwordEditorForm::setGoddessSword(bool val)
+void SkywardSwordQuestEditorForm::setGoddessSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -858,12 +907,12 @@ void SkywardSwordEditorForm::setGoddessSword(bool val)
     setFlag(0x09E4, 0x01, val);
 }
 
-bool SkywardSwordEditorForm::goddessLongSword()
+bool SkywardSwordQuestEditorForm::goddessLongSword()
 {
     return flag(0x09E4, 0x02);
 }
 
-void SkywardSwordEditorForm::setGoddessLongSword(bool val)
+void SkywardSwordQuestEditorForm::setGoddessLongSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -876,12 +925,12 @@ void SkywardSwordEditorForm::setGoddessLongSword(bool val)
     setFlag(0x09E4, 0x02, val);
 }
 
-bool SkywardSwordEditorForm::goddessWhiteSword()
+bool SkywardSwordQuestEditorForm::goddessWhiteSword()
 {
     return flag(0x09FB, 0x10);
 }
 
-void SkywardSwordEditorForm::setGoddessWhiteSword(bool val)
+void SkywardSwordQuestEditorForm::setGoddessWhiteSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -895,12 +944,12 @@ void SkywardSwordEditorForm::setGoddessWhiteSword(bool val)
     setFlag(0x09FB, 0x10, val);
 }
 
-bool SkywardSwordEditorForm::masterSword()
+bool SkywardSwordQuestEditorForm::masterSword()
 {
     return flag(0x09E4, 0x04);
 }
 
-void SkywardSwordEditorForm::setMasterSword(bool val)
+void SkywardSwordQuestEditorForm::setMasterSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -913,12 +962,12 @@ void SkywardSwordEditorForm::setMasterSword(bool val)
     setFlag(0x09E4, 0x04, val);
 }
 
-bool SkywardSwordEditorForm::trueMasterSword()
+bool SkywardSwordQuestEditorForm::trueMasterSword()
 {
     return flag(0x09F3, 0x80);
 }
 
-void SkywardSwordEditorForm::setTrueMasterSword(bool val)
+void SkywardSwordQuestEditorForm::setTrueMasterSword(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -929,7 +978,7 @@ void SkywardSwordEditorForm::setTrueMasterSword(bool val)
     setFlag(0x09F3, 0x080, val);
 }
 
-bool SkywardSwordEditorForm::wallet(WalletType type)
+bool SkywardSwordQuestEditorForm::wallet(WalletType type)
 {
     switch(type)
     {
@@ -943,7 +992,7 @@ bool SkywardSwordEditorForm::wallet(WalletType type)
     return false;
 }
 
-void SkywardSwordEditorForm::setWallet(bool val)
+void SkywardSwordQuestEditorForm::setWallet(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -960,7 +1009,7 @@ void SkywardSwordEditorForm::setWallet(bool val)
         setFlag(0x09Ef, 0x20, val);
 }
 
-bool SkywardSwordEditorForm::triforce(TriforceWidget::TriforcePiece piece)
+bool SkywardSwordQuestEditorForm::triforce(TriforceWidget::TriforcePiece piece)
 {
     switch(piece)
     {
@@ -971,7 +1020,7 @@ bool SkywardSwordEditorForm::triforce(TriforceWidget::TriforcePiece piece)
     }
 }
 
-void SkywardSwordEditorForm::triforceClicked()
+void SkywardSwordQuestEditorForm::triforceClicked()
 {
     if (!updatesEnabled())
         return;
@@ -988,7 +1037,7 @@ void SkywardSwordEditorForm::triforceClicked()
     }
 }
 
-bool SkywardSwordEditorForm::bug(SkywardSwordEditorForm::BugType bug)
+bool SkywardSwordQuestEditorForm::bug(SkywardSwordQuestEditorForm::BugType bug)
 {
     switch(bug)
     {
@@ -1008,7 +1057,7 @@ bool SkywardSwordEditorForm::bug(SkywardSwordEditorForm::BugType bug)
     }
 }
 
-void SkywardSwordEditorForm::setBug(bool val)
+void SkywardSwordQuestEditorForm::setBug(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -1039,7 +1088,7 @@ void SkywardSwordEditorForm::setBug(bool val)
         setFlag(0x09F5, 0x08, val);
 }
 
-int SkywardSwordEditorForm::bugAmount(SkywardSwordEditorForm::BugType bug)
+int SkywardSwordQuestEditorForm::bugAmount(SkywardSwordQuestEditorForm::BugType bug)
 {
     switch(bug)
     {
@@ -1059,7 +1108,7 @@ int SkywardSwordEditorForm::bugAmount(SkywardSwordEditorForm::BugType bug)
     }
 }
 
-void SkywardSwordEditorForm::setBugAmount(int val)
+void SkywardSwordQuestEditorForm::setBugAmount(int val)
 {
     if (!updatesEnabled())
         return;
@@ -1099,7 +1148,7 @@ void SkywardSwordEditorForm::setBugAmount(int val)
         setQuantity(false, 0x0A46, val);
 }
 
-bool SkywardSwordEditorForm::material(MaterialType material)
+bool SkywardSwordQuestEditorForm::material(MaterialType material)
 {
     switch(material)
     {
@@ -1123,7 +1172,7 @@ bool SkywardSwordEditorForm::material(MaterialType material)
     }
 }
 
-void SkywardSwordEditorForm::setMaterial(bool val)
+void SkywardSwordQuestEditorForm::setMaterial(bool val)
 {
     if (!updatesEnabled())
         return;
@@ -1162,7 +1211,7 @@ void SkywardSwordEditorForm::setMaterial(bool val)
         setFlag(0x0936, 0x01, val);
 }
 
-int SkywardSwordEditorForm::materialAmount(MaterialType material)
+int SkywardSwordQuestEditorForm::materialAmount(MaterialType material)
 {
     switch(material)
     {
@@ -1186,7 +1235,7 @@ int SkywardSwordEditorForm::materialAmount(MaterialType material)
     }
 }
 
-void SkywardSwordEditorForm::setMaterialAmount(int val)
+void SkywardSwordQuestEditorForm::setMaterialAmount(int val)
 {
     if (!updatesEnabled())
         return;
@@ -1234,12 +1283,12 @@ void SkywardSwordEditorForm::setMaterialAmount(int val)
         setQuantity(false, 0x0A34, val);
 }
 
-int SkywardSwordEditorForm::gratitudeCrystals()
+int SkywardSwordQuestEditorForm::gratitudeCrystals()
 {
     return (int)((qFromBigEndian<quint16>(*(quint16*)(m_gameData + 0x0A50)) >> 3) & 127);
 }
 
-void SkywardSwordEditorForm::setGratitudeCrystals(int val)
+void SkywardSwordQuestEditorForm::setGratitudeCrystals(int val)
 {
     if (!updatesEnabled())
         return;
@@ -1261,7 +1310,7 @@ void SkywardSwordEditorForm::setGratitudeCrystals(int val)
     emit modified();
 }
 
-bool SkywardSwordEditorForm::isCutsceneMode()
+bool SkywardSwordQuestEditorForm::isCutsceneMode()
 {
     if (!m_gameData)
         return true;
@@ -1269,7 +1318,7 @@ bool SkywardSwordEditorForm::isCutsceneMode()
     return flag(0x53A9, 0x01);
 }
 
-void SkywardSwordEditorForm::setCutsceneMode(bool isCutsceneMode)
+void SkywardSwordQuestEditorForm::setCutsceneMode(bool isCutsceneMode)
 {
     if (!m_gameData)
         return;
@@ -1277,7 +1326,7 @@ void SkywardSwordEditorForm::setCutsceneMode(bool isCutsceneMode)
     setFlag(0x53A9, 0x01, isCutsceneMode);
 }
 
-bool SkywardSwordEditorForm::isNew()
+bool SkywardSwordQuestEditorForm::isNew()
 {
     if (!m_gameData)
         return true;
@@ -1285,7 +1334,7 @@ bool SkywardSwordEditorForm::isNew()
     return flag(0x53AD, 0x01);
 }
 
-void SkywardSwordEditorForm::setNew(bool isNew)
+void SkywardSwordQuestEditorForm::setNew(bool isNew)
 {
     if (!m_gameData)
         return;
@@ -1293,12 +1342,12 @@ void SkywardSwordEditorForm::setNew(bool isNew)
     setFlag(0x53AD, 0x01, isNew);
 }
 
-int SkywardSwordEditorForm::checksum()
+int SkywardSwordQuestEditorForm::checksum()
 {
     return qFromBigEndian(*(quint32*)(m_gameData + 0x53BC));
 }
 
-void SkywardSwordEditorForm::updateChecksum()
+void SkywardSwordQuestEditorForm::updateQuestChecksum()
 {
     int oldChecksum = checksum();
     *(quint32*)(m_gameData + 0x53BC) = qToBigEndian((quint32)Athena::Checksums::crc32((Uint8*)m_gameData, 0x53BC));
@@ -1307,12 +1356,12 @@ void SkywardSwordEditorForm::updateChecksum()
         emit modified();
 }
 
-int SkywardSwordEditorForm::skipChecksum()
+int SkywardSwordQuestEditorForm::skipChecksum()
 {
     return qFromBigEndian(*(quint32*)(m_skipData + 0x20));
 }
 
-void SkywardSwordEditorForm::updateSkipChecksum()
+void SkywardSwordQuestEditorForm::updateSkipChecksum()
 {
     int oldChecksum = skipChecksum();
     *(quint32*)(m_skipData + 0x20) = qToBigEndian((quint32)Athena::Checksums::crc32((Uint8*)m_skipData, 0x20));
@@ -1321,23 +1370,31 @@ void SkywardSwordEditorForm::updateSkipChecksum()
         emit modified();
 }
 
-void SkywardSwordEditorForm::setAllSkips()
+void SkywardSwordQuestEditorForm::setAllSkips()
 {
     SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
 
-    foreach (SkipElement elem, settingsDialog->skipDatabase())
-        setSkipBit(elem.offset, elem.bit, true);
+    for (int i = 0; i <  settingsDialog->skipDatabase().count(); i++)
+    {
+        if (skipBit(settingsDialog->skipDatabase().at(i).offset, settingsDialog->skipDatabase().at(i).bit))
+            continue;
+        setSkipBit(settingsDialog->skipDatabase().at(i).offset, settingsDialog->skipDatabase().at(i).bit, true);
+    }
 }
 
-void SkywardSwordEditorForm::clearAllSkips()
+void SkywardSwordQuestEditorForm::clearAllSkips()
 {
     SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
 
-    foreach (SkipElement elem, settingsDialog->skipDatabase())
-        setSkipBit(elem.offset, elem.bit, false);
+    for (int i = 0; i <  settingsDialog->skipDatabase().count(); i++)
+    {
+        if (!skipBit(settingsDialog->skipDatabase().at(i).offset, settingsDialog->skipDatabase().at(i).bit))
+            continue;
+        setSkipBit(settingsDialog->skipDatabase().at(i).offset, settingsDialog->skipDatabase().at(i).bit, false);
+    }
 }
 
-void SkywardSwordEditorForm::buildSkipTab()
+void SkywardSwordQuestEditorForm::buildSkipTab()
 {
     SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
     QList<SkipElement> database = settingsDialog->skipDatabase();
@@ -1369,12 +1426,12 @@ void SkywardSwordEditorForm::buildSkipTab()
     }
 }
 
-bool SkywardSwordEditorForm::skipBit(quint32 offset, quint32 bit)
+bool SkywardSwordQuestEditorForm::skipBit(quint32 offset, quint32 bit)
 {
     return (bool)(*(Uint8*)(m_skipData + offset) & (1 << bit));
 }
 
-void SkywardSwordEditorForm::setSkipBit(quint32 offset, quint32 bit, bool val)
+void SkywardSwordQuestEditorForm::setSkipBit(quint32 offset, quint32 bit, bool val)
 {
     if (val)
         *(Uint8*)(m_skipData + offset) |= (1 << bit);
@@ -1383,7 +1440,7 @@ void SkywardSwordEditorForm::setSkipBit(quint32 offset, quint32 bit, bool val)
     emit modified();
 }
 
-void SkywardSwordEditorForm::addSkipChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible)
+void SkywardSwordQuestEditorForm::addSkipChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible)
 {   
     if (name.isNull())
     {
@@ -1422,7 +1479,7 @@ void SkywardSwordEditorForm::addSkipChkBox(const QString& name, const QString& t
     m_skipChkBoxes << chkBox;
 }
 
-void SkywardSwordEditorForm::setQuantity(bool isRight, int offset, quint32 val)
+void SkywardSwordQuestEditorForm::setQuantity(bool isRight, int offset, quint32 val)
 {
     quint16 oldVal = qFromBigEndian(*(quint16*)(m_gameData + offset));
     if (!isRight)
@@ -1441,7 +1498,7 @@ void SkywardSwordEditorForm::setQuantity(bool isRight, int offset, quint32 val)
     emit modified();
 }
 
-quint32 SkywardSwordEditorForm::quantity(bool isRight, int offset) const
+quint32 SkywardSwordQuestEditorForm::quantity(bool isRight, int offset) const
 {
     if (!m_gameData)
         return 0;
@@ -1449,12 +1506,12 @@ quint32 SkywardSwordEditorForm::quantity(bool isRight, int offset) const
     return (quint32)(qFromBigEndian((*(quint16*)(m_gameData + offset))) >> (isRight ? 0 : 7)) & 127;
 }
 
-bool SkywardSwordEditorForm::flag(quint32 offset, quint32 flag)
+bool SkywardSwordQuestEditorForm::flag(quint32 offset, quint32 flag)
 {
     return (*(char*)(m_gameData + offset) & flag) == flag;
 }
 
-void SkywardSwordEditorForm::setFlag(quint32 offset, quint32 flag, bool val)
+void SkywardSwordQuestEditorForm::setFlag(quint32 offset, quint32 flag, bool val)
 {
     if (this->flag(offset, flag) == val)
         return;
@@ -1467,7 +1524,7 @@ void SkywardSwordEditorForm::setFlag(quint32 offset, quint32 flag, bool val)
     emit modified();
 }
 
-void SkywardSwordEditorForm::updateData()
+void SkywardSwordQuestEditorForm::updateData()
 {
     this->setUpdatesEnabled(false);
     // "Toolbar" Items
@@ -1597,7 +1654,7 @@ void SkywardSwordEditorForm::updateData()
     //this->update();
 }
 
-void SkywardSwordEditorForm::updateBugs()
+void SkywardSwordQuestEditorForm::updateBugs()
 {
     ui->hornetChkBox      ->setChecked(bug(DekuHornet));
     ui->hornetSpinBox     ->setValue(bugAmount(DekuHornet));
@@ -1626,7 +1683,7 @@ void SkywardSwordEditorForm::updateBugs()
 }
 
 
-void SkywardSwordEditorForm::updateMaterials()
+void SkywardSwordQuestEditorForm::updateMaterials()
 {
     ui->hornetLarvaeChkBox->setChecked(material(DekuHornetLarvae));
     ui->hornetLarvaeSpinBox->setValue(materialAmount(DekuHornetLarvae));
@@ -1662,7 +1719,7 @@ void SkywardSwordEditorForm::updateMaterials()
     ui->goddessPlumeSpinBox->setValue(materialAmount(GoddessPlume));
 }
 
-void SkywardSwordEditorForm::updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox)
+void SkywardSwordQuestEditorForm::updateChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible, QCheckBox* chkBox)
 {
     chkBox->setObjectName(name);
     chkBox->setProperty("isCutscene", true);

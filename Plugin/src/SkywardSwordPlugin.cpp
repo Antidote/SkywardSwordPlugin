@@ -14,7 +14,7 @@
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
 #include "SkywardSwordPlugin.hpp"
-#include "SkywardSwordGameFile.hpp"
+#include "SkywardSwordGameDocument.hpp"
 #include "SettingsManager.hpp"
 #include "SettingsDialog.hpp"
 #include "Constants.hpp"

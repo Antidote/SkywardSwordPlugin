@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SkywardSwordWidget</class>
+ <widget class="QWidget" name="SkywardSwordWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>622</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0" colspan="6">
+    <widget class="SkywardSwordTabWidget" name="tabWidget">
+     <property name="documentMode">
+      <bool>true</bool>
+     </property>
+     <property name="movable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QRadioButton" name="ntscURB">
+     <property name="text">
+      <string>NTSC-U</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">regionBtnGroup</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QPushButton" name="infoButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Info</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QRadioButton" name="ntscJRB">
+     <property name="text">
+      <string>NTSC-J</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">regionBtnGroup</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QRadioButton" name="ntscKRB">
+     <property name="text">
+      <string>NTSC-K</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">regionBtnGroup</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QRadioButton" name="palRB">
+     <property name="text">
+      <string>PAL</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">regionBtnGroup</string>
+     </attribute>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SkywardSwordTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>SkywardSwordTabWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>regionBtnGroup</sender>
+   <signal>buttonToggled(QAbstractButton*,bool)</signal>
+   <receiver>SkywardSwordWidget</receiver>
+   <slot>onButtonClicked(QAbstractButton*,bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onButtonClicked(QAbstractButton*,bool)</slot>
+  <slot>infoButtonClicked()</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="regionBtnGroup"/>
+ </buttongroups>
+</ui>

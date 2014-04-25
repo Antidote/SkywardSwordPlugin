@@ -1,8 +1,19 @@
-#-------------------------------------------------
+# This file is part of Sakura Suite.
 #
-# Project created by Creator 2013-09-06T02:05:41
+# Sakura Suite is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#-------------------------------------------------
+# Sakura Suite is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
+
+
 
 QT    += core gui network xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -53,8 +64,6 @@ CONFIG(debug, debug|release){
 
 SOURCES += \
     src/SkywardSwordPlugin.cpp \
-    src/SkywardSwordEditorForm.cpp \
-    src/SkywardSwordGameFile.cpp \
     src/SettingsManager.cpp \
     src/SettingsDialog.cpp \
     src/PlaytimeWidget.cpp \
@@ -65,13 +74,15 @@ SOURCES += \
     src/UpdateDialog.cpp \
     src/SkipDatabaseWidget.cpp \
     src/SkipDatabaseElementEditor.cpp \
-    src/ImportExportQuestDialog.cpp
+    src/ImportExportQuestDialog.cpp \
+    src/SkywardSwordWidget.cpp \
+    src/SaveInfoDialog.cpp \
+    src/SkywardSwordGameDocument.cpp \
+    src/SkywardSwordQuestEditorForm.cpp
 
 HEADERS +=\
     include/SkywardSwordPlugin.hpp \
     include/skywardswordplugin_global.hpp \
-    include/SkywardSwordEditorForm.hpp \
-    include/SkywardSwordGameFile.hpp \
     include/SettingsManager.hpp \
     include/SettingsDialog.hpp \
     include/PlaytimeWidget.hpp \
@@ -83,7 +94,11 @@ HEADERS +=\
     include/UpdateDialog.hpp \
     include/SkipDatabaseWidget.hpp \
     include/SkipDatabaseElementEditor.hpp \
-    include/ImportExportQuestDialog.hpp
+    include/ImportExportQuestDialog.hpp \
+    include/SkywardSwordWidget.hpp \
+    include/SaveInfoDialog.hpp \
+    include/SkywardSwordGameDocument.hpp \
+    include/SkywardSwordQuestEditorForm.hpp
 
 RESOURCES += \
     resources/resources.qrc
@@ -99,6 +114,8 @@ FORMS += \
     ui/UpdateDialog.ui \
     ui/SkipDatabaseWidget.ui \
     ui/SkipDatabaseElementEditor.ui \
-    ui/ImportExportQuestDialog.ui
+    ui/ImportExportQuestDialog.ui \
+    ui/SkywardSwordWidget.ui \
+    ui/SaveInfoDialog.ui
 
 win32:RC_FILE += resources/resource.rc

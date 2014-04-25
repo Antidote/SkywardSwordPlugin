@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <Common.hpp>
 
 class SettingsManager : public QObject
 {
@@ -28,16 +29,14 @@ class SettingsManager : public QObject
 public:
     virtual ~SettingsManager();
 
-    enum {NTSCU, NTSCJ, PAL};
-    
-    QString defaultPlayerNameForRegion(quint32 region) const;
-    void setDefaultPlayerNameForRegion(quint32 region, const QString& name);
+    QString defaultPlayerNameForRegion(Region region) const;
+    void setDefaultPlayerNameForRegion(Region region, const QString &name);
     void setDefaultPlayerNameForRegion(const QStringList&);
 
     QString defaultPlayerName() const;
 
-    quint32 defaultRegion() const;
-    void setDefaultRegion(const quint32 region);
+    Region defaultRegion() const;
+    void setDefaultRegion(const Region region);
 
     QString updateUrl() const;
     void setUpdateUrl(const QString& updateUrl);
@@ -53,7 +52,7 @@ private:
     SettingsManager(SettingsManager&);
     SettingsManager();
     QStringList m_defaultNameList; //!< The default name for the region, Must be in order of NTSCU, NTSCJ, PAL
-    quint32     m_defaultRegion;   //!< The default region for the save
+    Region      m_defaultRegion;   //!< The default region for the save
     QString     m_updateUrl;
     bool        m_updateCheckOnStart;
 

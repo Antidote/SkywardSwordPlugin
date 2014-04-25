@@ -13,25 +13,36 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#ifndef UPDATEDIALOG_HPP
-#define UPDATEDIALOG_HPP
+#ifndef FILEINFODIALOG_H
+#define FILEINFODIALOG_H
 
 #include <QDialog>
+#include "Common.hpp"
+class SkywardSwordGameDocument;
+class QAbstractButton;
 
 namespace Ui {
-class UpdateDialog;
+    class SaveInfoDialog;
 }
 
-class UpdateDialog : public QDialog
+class SaveInfoDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit UpdateDialog(QWidget *parent = 0);
-    ~UpdateDialog();
+    explicit SaveInfoDialog(SkywardSwordGameDocument* document, QWidget *parent);
+    ~SaveInfoDialog();
 
+private slots:
+    void showEvent(QShowEvent *);
+    void onRegionChanged(QAbstractButton* btn, bool val);
+    void accept();
 private:
-    Ui::UpdateDialog *ui;
+    enum StringType {Title, Subtitle};
+    QString regionString(Region region, StringType type) const;
+    Ui::SaveInfoDialog *ui;
+    SkywardSwordGameDocument* m_document;
+    Region               m_region;
 };
 
-#endif // UPDATEDIALOG_HPP
+#endif // FILEINFODIALOG_H

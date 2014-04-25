@@ -13,12 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#include "SkywardSwordGameFile.hpp"
+#include "SkywardSwordGameDocument.hpp"
 #include "SkywardSwordEditorForm.hpp"
+#include "SkywardSwordWidget.hpp"
 #include "SkywardSwordTabWidget.hpp"
 #include "SkywardSwordPlugin.hpp"
 #include "CopyWidget.hpp"
-
+#include "SettingsManager.hpp"
+#include "SaveInfoDialog.hpp"
 
 #include <Athena/ZQuestFile.hpp>
 #include <Athena/ZQuestFileWriter.hpp>
@@ -52,10 +54,13 @@ SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader
     : GameDocument(loader, file),
       m_skipData(NULL)
 {
-    m_widget = new SkywardSwordTabWidget;
+    m_widget = new SkywardSwordWidget;
     m_copyWidget = new CopyWidget(m_widget);
-    SkywardSwordTabWidget* tw = qobject_cast<SkywardSwordTabWidget*>(m_widget);
-    Q_ASSERT(tw != NULL);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    SkywardSwordTabWidget* tw = mainWidget->tabWidget();
+
+    connect(mainWidget, SIGNAL(infoButtonClicked()), this, SLOT(onInfoButtonClicked()));
     tw->setIconSize(QSize(32, 32));
     tw->setDocumentMode(true);
     tw->setMovable(true);
@@ -65,17 +70,20 @@ SkywardSwordGameDocument::SkywardSwordGameDocument(const PluginInterface *loader
     {
         m_skipData = new char[0x80];
         memset(m_skipData, 0, 0x80);
+        mainWidget->setRegion(SettingsManager::instance()->defaultRegion());
+
         for (int i = 0; i < 3; i++)
         {
             char* data = new char[0x53C0];
             memset(data, 0, 0x53C0);
             char* skipData = new char[0x24];
             memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(data, skipData);
+            SkywardSwordQuestEditorForm* sw = new SkywardSwordQuestEditorForm(data, skipData, mainWidget->region());
             sw->setNew(true);
             tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), tr("&%1 New Game").arg(i + 1));
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
-            connect(sw, SIGNAL(copy(SkywardSwordEditorForm*)), this, SLOT(onCopy(SkywardSwordEditorForm*)));
+            connect(mainWidget, SIGNAL(regionChanged(Region)), sw, SLOT(setRegion(Region)));
+            connect(sw, SIGNAL(copy(SkywardSwordQuestEditorForm*)), this, SLOT(onCopy(SkywardSwordQuestEditorForm*)));
         }
         setDirty(true);
     }
@@ -139,13 +147,14 @@ bool SkywardSwordGameDocument::reload()
 {
     // First store the current tabs
     QList<int> swCurTabs;
-    QTabWidget* tw = qobject_cast<QTabWidget*>(m_widget);
-    Q_ASSERT(tw);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    SkywardSwordTabWidget* tw = mainWidget->tabWidget();
     int twCurrentTab = tw->currentIndex();
 
     for (int i = 0; i < tw->count(); i++)
     {
-        SkywardSwordEditorForm* sw = qobject_cast<SkywardSwordEditorForm*>(tw->widget(i));
+        SkywardSwordQuestEditorForm* sw = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(i));
         swCurTabs.push_back(sw->currentTab());
     }
 
@@ -155,7 +164,7 @@ bool SkywardSwordGameDocument::reload()
     {
         for (int i = 0; i < tw->count(); i++)
         {
-            SkywardSwordEditorForm* sw = qobject_cast<SkywardSwordEditorForm*>(tw->widget(i));
+            SkywardSwordQuestEditorForm* sw = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(i));
             sw->setCurrentTab(swCurTabs[i]);
         }
         tw->setCurrentIndex(twCurrentTab);
@@ -175,9 +184,9 @@ bool SkywardSwordGameDocument::exportWiiSave()
 {
     if (!m_keyManager->isValid())
         return false;
-
-    QTabWidget* tw = qobject_cast<QTabWidget*>(m_widget);
-    Q_ASSERT(tw);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
 
     QString filename = QFileDialog::getSaveFileName(SkywardSwordPlugin::instance()->mainWindow()->mainWindow(), "Export wii save", QString(), "WiiSave *.bin (*.bin)");
     if (filename.isNull())
@@ -186,17 +195,18 @@ bool SkywardSwordGameDocument::exportWiiSave()
     if (QFileInfo(filename).suffix() != "bin")
         filename += ".bin";
 
-    QFile tmp(":/BannerData/banner.tpl");
 
     Athena::WiiSave* save = new Athena::WiiSave;
 
-    int gameId = ('S' << 24) | ('O' << 16) | ('U' << 8) | (int)m_region;
+    Region region = mainWidget->region();
+    int gameId = ('S' << 24) | ('O' << 16) | ('U' << 8) | (int)region;
     quint64 titleId = 0x00010000;
     titleId = (qToBigEndian((quint64)gameId)) | (qToBigEndian(titleId) >> 32);
 
     qDebug() << hex << qFromBigEndian(titleId);
     Athena::WiiBanner* banner = new Athena::WiiBanner();
     banner->setGameID(qFromBigEndian(titleId));
+    QFile tmp(":/BannerData/banner.tpl");
     if (tmp.open(QFile::ReadOnly))
     {
         QDataStream dataStream(&tmp);
@@ -227,7 +237,7 @@ bool SkywardSwordGameDocument::exportWiiSave()
         return false;
     }
 
-    tmp.setFileName(QString(":/BannerData/%1/title.bin").arg(m_region));
+    tmp.setFileName(QString(":/BannerData/%1/title.bin").arg((char)region));
     if (tmp.open(QFile::ReadOnly))
     {
         QString titleString = QString::fromUtf16((ushort*)tmp.readAll().data());
@@ -240,7 +250,7 @@ bool SkywardSwordGameDocument::exportWiiSave()
         return false;
     }
 
-    tmp.setFileName(QString(":/BannerData/%1/subtitle.bin").arg(m_region));
+    tmp.setFileName(QString(":/BannerData/%1/subtitle.bin").arg((char)region));
     if (tmp.open(QFile::ReadOnly))
     {
         QString subtitleString = QString::fromUtf16((ushort*)tmp.readAll().data());
@@ -262,19 +272,19 @@ bool SkywardSwordGameDocument::exportWiiSave()
         writer.setEndian(Athena::Endian::BigEndian);
         writer.writeUint32(0x534F5500);
         writer.seek(-1);
-        writer.writeByte(m_region);
+        writer.writeByte((char)region);
         writer.seek(0x1C, Athena::SeekOrigin::Begin);
         writer.writeUint32(0x1D);
 
         for (int i = 0; i < 3; i++)
         {
-            SkywardSwordEditorForm* ef = qobject_cast<SkywardSwordEditorForm*>(tw->widget(i));
+            SkywardSwordQuestEditorForm* ef = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(i));
             if (!ef)
                 return false;
             else
             {
                 // Let's be sure we have a proper checksum
-                ef->updateChecksum();
+                ef->updateQuestChecksum();
                 writer.writeBytes((Int8*)ef->gameData(), 0x53C0);
             }
         }
@@ -306,6 +316,55 @@ bool SkywardSwordGameDocument::exportWiiSave()
     return true;
 }
 
+Region SkywardSwordGameDocument::region()
+{
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    return mainWidget->region();
+}
+
+void SkywardSwordGameDocument::setRegion(Region region)
+{
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    mainWidget->setRegion(region);
+}
+
+SkywardSwordQuestEditorForm*SkywardSwordGameDocument::quest(quint32 index)
+{
+    if (index > 3)
+        return NULL;
+
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
+    SkywardSwordQuestEditorForm* sw = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(index));
+    return sw;
+}
+
+int SkywardSwordGameDocument::currentQuestIndex()
+{
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
+    return tw->currentIndex();
+}
+
+SkywardSwordQuestEditorForm* SkywardSwordGameDocument::currentQuest()
+{
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
+    SkywardSwordQuestEditorForm* sw = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(tw->currentIndex()));
+    return sw;
+}
+
+void SkywardSwordGameDocument::onInfoButtonClicked()
+{
+    SaveInfoDialog sid(this, m_widget);
+    sid.exec();
+}
+
 QString SkywardSwordGameDocument::game() const
 {
     return "SkywardSword";
@@ -322,24 +381,28 @@ bool SkywardSwordGameDocument::save(const QString& filename)
 
     try
     {
-        QTabWidget* tw = (QTabWidget*)m_widget;
+        SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+        Q_ASSERT(mainWidget != NULL);
+        QTabWidget* tw = mainWidget->tabWidget();
+
+        Region region = mainWidget->region();
         Athena::io::BinaryWriter writer(filePath().toStdString());
         writer.setEndian(Athena::Endian::BigEndian);
         writer.writeUint32(0x534F5500);
         writer.seek(-1);
-        writer.writeByte(m_region);
+        writer.writeByte((char)region);
         writer.seek(0x1C, Athena::SeekOrigin::Begin);
         writer.writeUint32(0x1D);
 
         for (int i = 0; i < 3; i++)
         {
-            SkywardSwordEditorForm* ef = qobject_cast<SkywardSwordEditorForm*>(tw->widget(i));
+            SkywardSwordQuestEditorForm* ef = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(i));
             if (!ef)
                 return false;
             else
             {
                 // Let's be sure we have a proper checksum
-                ef->updateChecksum();
+                ef->updateQuestChecksum();
                 writer.writeBytes((Int8*)ef->gameData(), 0x53C0);
                 memcpy((m_skipData + (0x24 * i)), ef->skipData(), 0x24);
             }
@@ -360,10 +423,12 @@ bool SkywardSwordGameDocument::save(const QString& filename)
 
 void SkywardSwordGameDocument::onModified()
 {
-    QTabWidget* tw = qobject_cast<QTabWidget*>(m_widget);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
     for (int i = 0; i < tw->count(); i++)
     {
-        SkywardSwordEditorForm* sw = qobject_cast<SkywardSwordEditorForm*>(tw->widget(i));
+        SkywardSwordQuestEditorForm* sw = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(i));
         tw->setTabIcon(i, QIcon(QString(":/icons/Game%1").arg(i + 1)));
         if (!sw->isNew())
             tw->setTabText(i, QString("&%1 %2").arg(i+1).arg(sw->playerName()));
@@ -374,9 +439,11 @@ void SkywardSwordGameDocument::onModified()
     emit modified();
 }
 
-void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
+void SkywardSwordGameDocument::onCopy(SkywardSwordQuestEditorForm* source)
 {
-    QTabWidget* tw = qobject_cast<QTabWidget*>(m_widget);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
     int index = 0;
     for (int i = 0; i < tw->count(); i++)
     {
@@ -401,10 +468,10 @@ void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
         if (mbox.result() == QMessageBox::No)
             return;
 
-        SkywardSwordEditorForm* dest = NULL;
+        SkywardSwordQuestEditorForm* dest = NULL;
         if (m_copyWidget->questChecked(CopyWidget::Quest1) && source != tw->widget(0))
         {
-            dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest1));
+            dest = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(CopyWidget::Quest1));
             if (dest)
             {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
@@ -414,7 +481,7 @@ void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
         }
         if (m_copyWidget->questChecked(CopyWidget::Quest2) && source != tw->widget(CopyWidget::Quest2))
         {
-            dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest2));
+            dest = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(CopyWidget::Quest2));
             if (dest)
             {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
@@ -424,7 +491,7 @@ void SkywardSwordGameDocument::onCopy(SkywardSwordEditorForm* source)
         }
         if (m_copyWidget->questChecked(CopyWidget::Quest3) && source != tw->widget(CopyWidget::Quest3))
         {
-            dest = qobject_cast<SkywardSwordEditorForm*>(tw->widget(CopyWidget::Quest3));
+            dest = qobject_cast<SkywardSwordQuestEditorForm*>(tw->widget(CopyWidget::Quest3));
             if (dest)
             {
                 dest->setGameData(QByteArray(source->gameData(), 0x53C0));
@@ -444,8 +511,9 @@ void SkywardSwordGameDocument::onTabMoved(int from, int to)
 
 bool SkywardSwordGameDocument::loadData(Athena::io::BinaryReader reader)
 {
-    SkywardSwordTabWidget* tw = qobject_cast<SkywardSwordTabWidget*>(m_widget);
-    Q_ASSERT(tw);
+    SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
+    Q_ASSERT(mainWidget != NULL);
+    QTabWidget* tw = mainWidget->tabWidget();
     tw->clear();
     if (filePath().isEmpty())
         return true;
@@ -455,7 +523,7 @@ bool SkywardSwordGameDocument::loadData(Athena::io::BinaryReader reader)
         reader.setEndian(Athena::Endian::BigEndian);
 
         Uint32 magic = reader.readUint32();
-        m_region = magic & 0x000000FF;
+        mainWidget->setRegion((Region)(magic & 0x000000FF));
         magic &= 0xFFFFFF00;
 
         if (magic != 0x534F5500)
@@ -476,10 +544,11 @@ bool SkywardSwordGameDocument::loadData(Athena::io::BinaryReader reader)
             char* data = (char*)reader.readBytes(0x53C0);
             char* skipData = new char[0x24];
             memcpy(skipData, (m_skipData + (0x24 * i)), 0x24);
-            SkywardSwordEditorForm* sw = new SkywardSwordEditorForm(data, skipData);
+            SkywardSwordQuestEditorForm* sw = new SkywardSwordQuestEditorForm(data, skipData, mainWidget->region());
 
             connect(sw, SIGNAL(modified()), this, SLOT(onModified()));
-            connect(sw, SIGNAL(copy(SkywardSwordEditorForm*)), this, SLOT(onCopy(SkywardSwordEditorForm*)));
+            connect(sw, SIGNAL(copy(SkywardSwordQuestEditorForm*)), this, SLOT(onCopy(SkywardSwordQuestEditorForm*)));
+            connect(mainWidget, SIGNAL(regionChanged(Region)), sw, SLOT(setRegion(Region)));
             if (!sw->isNew())
                 tw->addTab(sw, QIcon(QString(":/icons/Game%1").arg(i+1)), QString("&%1 %2").arg(i+1).arg(sw->playerName()));
             else

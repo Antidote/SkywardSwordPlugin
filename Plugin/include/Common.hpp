@@ -19,6 +19,15 @@
 #include <QDateTime>
 #include <QPoint>
 
+enum class Region
+{
+    NTSCU = 'E',
+    NTSCJ = 'J',
+    NTSCK = 'K',
+    PAL   = 'P',
+    Count = 4
+};
+
 struct Playtime
 {
     int Hours;
@@ -28,6 +37,18 @@ struct Playtime
     bool operator ==(const Playtime& val)
     {
         return (val.Hours == Hours && val.Minutes == Minutes && val.Seconds == Seconds);
+    }
+    bool operator !=(const Playtime& val)
+    {
+        return (val.Hours != Hours || val.Minutes != Minutes || val.Seconds != Seconds);
+    }
+    bool operator >=(const Playtime& val)
+    {
+        return (val.Hours >= Hours || val.Minutes >= Minutes || val.Seconds >= Seconds);
+    }
+    bool operator <=(const Playtime& val)
+    {
+        return (val.Hours <= Hours || val.Minutes <= Minutes || val.Seconds <= Seconds);
     }
 };
 
@@ -53,6 +74,7 @@ struct SkipElement
 const quint64 SECONDS_TO_2000 = 946684800LL;
 const quint64 TICKS_PER_SECOND = 60750000LL;
 
+QImage convertTextureToImage( const QByteArray &ba, quint32 w, quint32 h );
 
 void saveWidgetGeom(QWidget* target, QString key);
 void restoreWidgetGeom(QWidget* target, QString key);

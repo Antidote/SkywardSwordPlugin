@@ -25,14 +25,16 @@ SettingsManager* SettingsManager::m_instance = NULL;
 SettingsManager::SettingsManager()
     : QObject(NULL)
 {
-    m_defaultNameList = QStringList() << "Link" << QString::fromUtf8("リンク") << "Link";
-    m_defaultRegion   = NTSCU;
+    m_defaultNameList = QStringList() << "Link" << QString::fromUtf8("링크") << QString::fromUtf8("リンク") << "Link";
+    m_defaultRegion   = Region::NTSCU;
 
     QSettings settings;
     settings.beginGroup(SkywardSwordPlugin::instance()->name());
-    m_defaultNameList = settings.value("defaultPlayerNameForRegion", m_defaultNameList).toStringList();
-    m_defaultRegion = (settings.value("defaultRegion", "NTSCU") == "NTSCU" ? NTSCU
-                                                                           : settings.value("defaultRegion", "NTSCJ") == "NTSCJ"? NTSCJ : PAL);
+    QStringList tmpNameList = settings.value("defaultPlayerNameForRegion", m_defaultNameList).toStringList();
+    if (tmpNameList.count() == (int)Region::Count)
+        m_defaultNameList = tmpNameList;
+
+    m_defaultRegion = (Region)settings.value("defaultRegion", "U").toChar().toLatin1();
 
 #ifdef SS_INTERNAL
     m_updateUrl = Constants::Settings::SKYWARDSWORD_UPDATE_URL_DEFAULT;
@@ -50,32 +52,65 @@ SettingsManager::~SettingsManager()
 }
 
 
-QString SettingsManager::defaultPlayerNameForRegion(quint32 region) const
+QString SettingsManager::defaultPlayerNameForRegion(Region region) const
 {
-    return m_defaultNameList[region];
+    switch (region)
+    {
+    case Region::NTSCU:
+        return m_defaultNameList[0];
+    case Region::NTSCK:
+        return m_defaultNameList[1];
+    case Region::NTSCJ:
+        return m_defaultNameList[2];
+    case Region::PAL:
+        return m_defaultNameList[3];
+    default:
+        return QString();
+    }
 }
 
-void SettingsManager::setDefaultPlayerNameForRegion(quint32 region, const QString &name)
+void SettingsManager::setDefaultPlayerNameForRegion(Region region, const QString &name)
 {
-    m_defaultNameList[region] = name;
+    int regionId;
+
+    switch (region)
+    {
+    case Region::NTSCU: regionId = 0; break;
+    case Region::NTSCK: regionId = 1; break;
+    case Region::NTSCJ: regionId = 2; break;
+    case Region::PAL:   regionId = 3; break;
+    default:
+        return;
+    }
+
+    m_defaultNameList[regionId] = name;
     saveSettings();
 }
 
 QString SettingsManager::defaultPlayerName() const
 {
-    return m_defaultNameList[m_defaultRegion];
+    switch (m_defaultRegion)
+    {
+    case Region::NTSCU:
+        return m_defaultNameList[0];
+    case Region::NTSCK:
+        return m_defaultNameList[1];
+    case Region::NTSCJ:
+        return m_defaultNameList[2];
+    case Region::PAL:
+        return m_defaultNameList[3];
+    default:
+        return QString();
+    }
 }
 
-quint32 SettingsManager::defaultRegion() const
+Region SettingsManager::defaultRegion() const
 {
     return m_defaultRegion;
 }
 
-void SettingsManager::setDefaultRegion(const quint32 region)
+void SettingsManager::setDefaultRegion(const Region region)
 {
-    if (region > PAL)
-        return;
-
     m_defaultRegion = region;
     saveSettings();
 }
@@ -107,7 +142,7 @@ void SettingsManager::saveSettings()
     QSettings settings;
     settings.beginGroup(SkywardSwordPlugin::instance()->name());
     settings.setValue("defaultPlayerNameForRegion", m_defaultNameList);
-    settings.setValue("defaultRegion", (m_defaultRegion == NTSCU ? "NTSCU" : (m_defaultRegion == NTSCJ ? "NTSCJ" : "PAL")));
+    settings.setValue("defaultRegion", QChar((char)m_defaultRegion));
 #ifndef SS_INTERNAL
     settings.setValue(Constants::Settings::SKYWARDSWORD_UPDATE_URL, m_updateUrl);
 #endif
