@@ -151,7 +151,7 @@ void ImportExportQuestDialog::accept()
                     memcpy(exportData->GameData, editorForm->gameData(), 0x53C0);
                     memcpy(exportData->SkipData, editorForm->skipData(), 0x24);
 
-                    zquest->setData((Uint8*)exportData, sizeof(ExportFmt));
+                    zquest->setData((atUint8*)exportData, sizeof(ExportFmt));
 
                     // LOZ:Skyward Sword
                     zquest->setGameString("Skyward Sword");

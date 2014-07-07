@@ -19,6 +19,7 @@
 #include <GameDocument.hpp>
 #include <QObject>
 #include "Common.hpp"
+#include <Athena/Types.hpp>
 
 class CopyWidget;
 class SkywardSwordQuestEditorForm;
@@ -58,7 +59,7 @@ private slots:
     void onTabMoved(int left, int right);
 private:
     bool loadData(Athena::io::BinaryReader reader);
-    char*       m_skipData;
+    atUint8*       m_skipData;
     CopyWidget* m_copyWidget;
 };
 

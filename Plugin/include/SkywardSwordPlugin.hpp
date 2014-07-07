@@ -79,7 +79,6 @@ private slots:
     void onUpdaterError(Updater::ErrorType error);
     void onUpdaterWarning(QString warning);
     void onNoUpdate();
-    void onFileChanged(QString file);
 private:
     QAction*                   m_actionNewDocument;
     bool                       m_enabled;
@@ -90,7 +89,6 @@ private:
     QMessageBox                m_updateMBox;
     Updater*                   m_updater;
     MainWindowBase*            m_mainWindow;
-    QFileSystemWatcher         m_fsWatcher;
 };
 
 #endif // SKYWARDSWORDPLUGGIN_HPP

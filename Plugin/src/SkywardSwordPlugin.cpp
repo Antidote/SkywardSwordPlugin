@@ -21,6 +21,7 @@
 #include <MainWindowBase.hpp>
 #include <DocumentBase.hpp>
 #include <Athena/Exception.hpp>
+#include "Common.hpp"
 
 #include <QFileInfo>
 #include <QIcon>
@@ -43,7 +44,6 @@ SkywardSwordPlugin::SkywardSwordPlugin()
 {
     m_actionNewDocument->setIcon(m_icon);
     m_instance = this;
-    connect(&m_fsWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));
 }
 
 SkywardSwordPlugin::~SkywardSwordPlugin()
@@ -63,7 +63,6 @@ void SkywardSwordPlugin::initialize(MainWindowBase *mainWindow)
     m_mainWindow = mainWindow;
     m_mainWindow->newDocumentMenu()->addAction(m_actionNewDocument);
     QDir().mkdir(QString(m_mainWindow->homePath().absolutePath() + QDir::separator() + name()));
-    m_fsWatcher.addPath(QString(m_mainWindow->homePath().absolutePath() + QDir::separator() + name() + QDir::separator() + "skipdb.xml"));
     connect(m_actionNewDocument, SIGNAL(triggered()), this, SLOT(onNewDocument()));
 
     m_settingsDialog = new SettingsDialog((QWidget*)m_mainWindow->mainWindow());
@@ -74,6 +73,8 @@ void SkywardSwordPlugin::initialize(MainWindowBase *mainWindow)
 
     if (settings()->updateCheckOnStart())
         doUpdate();
+
+    qDebug() << fromWiiTime(qFromBigEndian((quint64)0x476C255484D11B86));
 }
 
 QString SkywardSwordPlugin::filter() const
@@ -158,7 +159,7 @@ DocumentBase* SkywardSwordPlugin::loadFile(const QString& file) const
 
 bool SkywardSwordPlugin::canLoad(const QString& filename)
 {
-    Int32 gameId = -1;
+    atInt32 gameId = -1;
     if (QFileInfo(filename).suffix() == "bin")
     {
         try
@@ -322,13 +323,6 @@ void SkywardSwordPlugin::onNoUpdate()
 {
     ((QWidget*)parent())->setEnabled(true);
     m_updateMBox.hide();
-}
-
-void SkywardSwordPlugin::onFileChanged(QString file)
-{
-    m_fsWatcher.removePath(file);
-    qobject_cast<SettingsDialog*>(settingsDialog())->reloadSkipDatabase();
-    m_fsWatcher.addPath(file);
 }
 
 #if QT_VERSION < 0x050000

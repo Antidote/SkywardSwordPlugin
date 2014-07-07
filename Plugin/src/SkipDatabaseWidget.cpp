@@ -52,8 +52,9 @@ void SkipDatabaseWidget::saveDatabase()
         writer.setAutoFormatting(true);
         writer.writeStartDocument("1.0", true);
         writer.writeStartElement("SkipDatabase");
-        foreach (SkipElement data, m_skipDatabase)
+        for (int i = 0; i < m_skipDatabase.count(); i++)
         {
+            const SkipElement& data = m_skipDatabase.at(i);
             writer.writeStartElement("SkipData");
             writer.writeAttribute("objectName", data.objectName);
             writer.writeAttribute("text", data.text);
@@ -194,6 +195,9 @@ void SkipDatabaseWidget::onItemClicked(QTreeWidgetItem* item, int row)
             SkipElement& elem = (*i);
             if (elem.objectName == item->text(ObjectNameRow))
             {
+                if (elem.visible == (item->checkState(VisibleRow) == Qt::Checked ? true : false))
+                    break;
+
                 elem.visible = (item->checkState(VisibleRow) == Qt::Checked ? true : false);
                 emit skipDatabaseChanged();
                 break;

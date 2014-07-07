@@ -18,6 +18,7 @@
 QT    += core gui network xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+DEFINES += SS_INTERNAL
 TARGET = skywardswordplugin
 TEMPLATE = lib
 CONFIG += plugin

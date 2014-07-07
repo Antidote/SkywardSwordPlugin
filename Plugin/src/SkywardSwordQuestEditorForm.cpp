@@ -62,7 +62,6 @@ SkywardSwordQuestEditorForm::SkywardSwordQuestEditorForm(const char *data, const
 
 SkywardSwordQuestEditorForm::~SkywardSwordQuestEditorForm()
 {
-    //    m_skipChkBoxes.clear();
     delete[] m_gameData;
     m_gameData = NULL;
     delete[] m_skipData;
@@ -1350,7 +1349,7 @@ int SkywardSwordQuestEditorForm::checksum()
 void SkywardSwordQuestEditorForm::updateQuestChecksum()
 {
     int oldChecksum = checksum();
-    *(quint32*)(m_gameData + 0x53BC) = qToBigEndian((quint32)Athena::Checksums::crc32((Uint8*)m_gameData, 0x53BC));
+    *(quint32*)(m_gameData + 0x53BC) = qToBigEndian((quint32)Athena::Checksums::crc32((atUint8*)m_gameData, 0x53BC));
 
     if (checksum() != oldChecksum)
         emit modified();
@@ -1364,7 +1363,7 @@ int SkywardSwordQuestEditorForm::skipChecksum()
 void SkywardSwordQuestEditorForm::updateSkipChecksum()
 {
     int oldChecksum = skipChecksum();
-    *(quint32*)(m_skipData + 0x20) = qToBigEndian((quint32)Athena::Checksums::crc32((Uint8*)m_skipData, 0x20));
+    *(quint32*)(m_skipData + 0x20) = qToBigEndian((quint32)Athena::Checksums::crc32((atUint8*)m_skipData, 0x20));
 
     if (skipChecksum() != oldChecksum)
         emit modified();
@@ -1399,6 +1398,7 @@ void SkywardSwordQuestEditorForm::buildSkipTab()
     SettingsDialog* settingsDialog = qobject_cast<SettingsDialog*>(SkywardSwordPlugin::instance()->settingsDialog());
     QList<SkipElement> database = settingsDialog->skipDatabase();
 
+    this->setUpdatesEnabled(false);
     while (m_skipChkBoxes.count() > database.count())
     {
         delete m_skipChkBoxes.takeLast();
@@ -1424,19 +1424,20 @@ void SkywardSwordQuestEditorForm::buildSkipTab()
         else
             updateChkBox(elem.objectName, elem.text, elem.offset, elem.bit, elem.visible, m_skipChkBoxes.at(i));
     }
+    this->setUpdatesEnabled(true);
 }
 
 bool SkywardSwordQuestEditorForm::skipBit(quint32 offset, quint32 bit)
 {
-    return (bool)(*(Uint8*)(m_skipData + offset) & (1 << bit));
+    return (bool)(*(atUint8*)(m_skipData + offset) & (1 << bit));
 }
 
 void SkywardSwordQuestEditorForm::setSkipBit(quint32 offset, quint32 bit, bool val)
 {
     if (val)
-        *(Uint8*)(m_skipData + offset) |= (1 << bit);
+        *(atUint8*)(m_skipData + offset) |= (1 << bit);
     else
-        *(Uint8*)(m_skipData + offset) &= ~(1 << bit);
+        *(atUint8*)(m_skipData + offset) &= ~(1 << bit);
     emit modified();
 }
 
