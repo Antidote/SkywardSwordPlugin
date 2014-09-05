@@ -819,26 +819,31 @@ void SkywardSwordQuestEditorForm::setSlingshot(bool val)
     }
 }
 
+union AmmoValues
+{
+    struct
+    {
+        atUint32 arrows : 7;
+        atUint32 bombs  : 7;
+        atUint32        : 9;
+        atUint32 seeds  : 7;
+        atUint32        : 2;
+    };
+    atUint32 value;
+};
+
 int SkywardSwordQuestEditorForm::ammo(SkywardSwordQuestEditorForm::AmmoType type)
 {
-    // Nintendo uses an interesting encoding for the ammo counts
-    // 11111111 00111111 10000000 00111111
-    // | `----|   `----| `---------------|
-    // |      `Arrows  |  Seeds
-    // `---------------- Bombs
-    // Why nintendo decided to use this kind of encoding is a mystery,
-    // but fortunately it's easier to decode than it is to understand
-    quint32 val = qFromBigEndian(*(quint32*)(m_gameData + 0x0A60));
-    quint32 ret = 0;
+    AmmoValues values = *(AmmoValues*)(m_gameData + 0x0A60);
+    values.value = qFromBigEndian(values.value);
 
     switch(type)
     {
-        case Arrows: ret = (val >> 0 ) & 127; break;
-        case Bombs:  ret = (val >> 7 ) & 127; break;
-        case Seeds:  ret = (val >> 23) & 127; break;
+        case Arrows: return values.arrows;
+        case Bombs:  return values.bombs;
+        case Seeds:  return values.seeds;
+        default: return 0;
     }
-
-    return ret;
 }
 
 void SkywardSwordQuestEditorForm::setAmmo(int val)
@@ -846,27 +851,16 @@ void SkywardSwordQuestEditorForm::setAmmo(int val)
     if (!updatesEnabled())
         return;
 
-    // Nintendo uses an interesting encoding for the ammo counts
-    // 11111111 00111111 10000000 00111111
-    // | `----|   `----| `---------------|
-    // |      `Arrows  |  Seeds
-    // `---------------- Bombs
-    // Why nintendo decided to use this kind of encoding is a mystery,
-    // but fortunately it's easier to decode than it is to understand
-
-    quint32 tmp = qFromBigEndian(*(quint32*)(m_gameData + 0x0A60));
-    quint32 arrows = (tmp >> 0)  & 127;
-    quint32 bombs  = (tmp >> 7)  & 127;
-    quint32 seeds  = (tmp >> 23) & 127;
-
+    AmmoValues* values = (AmmoValues*)(m_gameData + 0x0A60);
+    values->value = qFromBigEndian(values->value);
     if (sender() == ui->arrowAmmoSpinBox)
-        arrows = val;
+        values->arrows = val;
     else if (sender() == ui->bombAmmoSpinBox)
-        bombs = val;
+        values->bombs = val;
     else if (sender() == ui->seedAmmoSpinBox)
-        seeds = val;
+        values->seeds = val;
 
-    *(quint32*)(m_gameData + 0x0A60) = qToBigEndian(arrows | (bombs << 7) | (seeds << 23));
+    values->value = qToBigEndian(values->value);
 
     emit modified();
 }
@@ -1282,9 +1276,24 @@ void SkywardSwordQuestEditorForm::setMaterialAmount(int val)
         setQuantity(false, 0x0A34, val);
 }
 
+union CrystalsAndFlags
+{
+    struct
+    {
+        atUint16 flags1   : 3;
+        atUint16 crystals : 7;
+        atUint16 flags2   : 6;
+    };
+
+    atUint16 value;
+};
+
 int SkywardSwordQuestEditorForm::gratitudeCrystals()
 {
-    return (int)((qFromBigEndian<quint16>(*(quint16*)(m_gameData + 0x0A50)) >> 3) & 127);
+    CrystalsAndFlags values = *(CrystalsAndFlags*)(m_gameData + 0x0A50);
+    values.value = qFromBigEndian(values.value);
+
+    return values.crystals;
 }
 
 void SkywardSwordQuestEditorForm::setGratitudeCrystals(int val)
@@ -1292,11 +1301,10 @@ void SkywardSwordQuestEditorForm::setGratitudeCrystals(int val)
     if (!updatesEnabled())
         return;
 
-    if (val > 127)
+    if (val > 100)
     {
         ui->gratitudeCrystalsSpinBox->setProperty("valid", false);
         style()->polish(ui->gratitudeCrystalsSpinBox);
-        return;
     }
     else
     {
@@ -1304,8 +1312,10 @@ void SkywardSwordQuestEditorForm::setGratitudeCrystals(int val)
         style()->polish(ui->gratitudeCrystalsSpinBox);
     }
 
-    quint16 oldVal = qFromBigEndian(*(quint16*)(m_gameData + 0x0A50)) & 0xFC00;
-    *(quint16*)(m_gameData + 0x0A50) = qToBigEndian((quint16)(oldVal | (((quint16)val << 3) & 0x03FF)));
+    CrystalsAndFlags* values = (CrystalsAndFlags*)(m_gameData + 0x0A50);
+    values->value = qFromBigEndian(values->value);
+    values->crystals = val;
+    values->value = qToBigEndian(values->value);
     emit modified();
 }
 
@@ -1480,32 +1490,45 @@ void SkywardSwordQuestEditorForm::addSkipChkBox(const QString& name, const QStri
     m_skipChkBoxes << chkBox;
 }
 
+
+union QuantityValues
+{
+    struct
+    {
+        atUint16 right : 7;
+        atUint16 left  : 7;
+        atUint16 : 2;
+    };
+    atUint16 value;
+};
+
 void SkywardSwordQuestEditorForm::setQuantity(bool isRight, int offset, quint32 val)
 {
-    quint16 oldVal = qFromBigEndian(*(quint16*)(m_gameData + offset));
-    if (!isRight)
-    {
-        quint16 newVal = (oldVal&127)|(((quint16)val << 7));
-        *(quint16*)(m_gameData + offset) = qToBigEndian(newVal);
-    }
-
+    QuantityValues* values = (QuantityValues*)(m_gameData + offset);
+    values->value = qFromBigEndian(values->value);
     if (isRight)
-    {
-        oldVal = (oldVal >> 7) & 127;
-        quint16 newVal = (val|(oldVal << 7));
-        *(quint16*)(m_gameData + offset) = qToBigEndian(newVal);
-    }
+        values->right = val;
+    else
+        values->left = val;
 
+    values->value = qToBigEndian(values->value);
     emit modified();
 }
 
-quint32 SkywardSwordQuestEditorForm::quantity(bool isRight, int offset) const
+quint32 SkywardSwordQuestEditorForm::quantity(bool isRight, int offset)
 {
     if (!m_gameData)
         return 0;
 
-    return (quint32)(qFromBigEndian((*(quint16*)(m_gameData + offset))) >> (isRight ? 0 : 7)) & 127;
+    QuantityValues values = *(QuantityValues*)(m_gameData + offset);
+    values.value = qFromBigEndian(values.value);
+    if (isRight)
+        return values.right;
+
+    return values.left;
 }
+
+
 
 bool SkywardSwordQuestEditorForm::flag(quint32 offset, quint32 flag)
 {

@@ -18,7 +18,7 @@
 QT    += core gui network xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-DEFINES += SS_INTERNAL
+#DEFINES += SS_INTERNAL
 TARGET = skywardswordplugin
 TEMPLATE = lib
 CONFIG += plugin
@@ -79,7 +79,8 @@ SOURCES += \
     src/SkywardSwordWidget.cpp \
     src/SaveInfoDialog.cpp \
     src/SkywardSwordGameDocument.cpp \
-    src/SkywardSwordQuestEditorForm.cpp
+    src/SkywardSwordQuestEditorForm.cpp \
+    src/WiiSaveLoaderThread.cpp
 
 HEADERS +=\
     include/SkywardSwordPlugin.hpp \
@@ -99,7 +100,8 @@ HEADERS +=\
     include/SkywardSwordWidget.hpp \
     include/SaveInfoDialog.hpp \
     include/SkywardSwordGameDocument.hpp \
-    include/SkywardSwordQuestEditorForm.hpp
+    include/SkywardSwordQuestEditorForm.hpp \
+    include/WiiSaveLoaderThread.hpp
 
 RESOURCES += \
     resources/resources.qrc

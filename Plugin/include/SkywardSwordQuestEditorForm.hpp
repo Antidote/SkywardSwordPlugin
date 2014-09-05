@@ -270,7 +270,7 @@ private:
     void setSkipBit(quint32 offset, quint32 bit, bool val);
     void addSkipChkBox(const QString& name, const QString& title, quint32 offset, quint32 bit, bool visible);
     void setQuantity(bool isRight, int offset, quint32 val);
-    quint32 quantity(bool isRight, int offset) const;
+    quint32 quantity(bool isRight, int offset);
     bool flag(quint32 offset, quint32 flag);
     void setFlag(quint32 offset, quint32 flag, bool val);
     void updateData();

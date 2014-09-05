@@ -59,20 +59,20 @@ void SaveInfoDialog::showEvent(QShowEvent *se)
 
     switch(m_document->region())
     {
-    case Region::NTSCU:
-        ui->ntscURB->setChecked(true);
-    break;
-    case Region::NTSCK:
-        ui->ntscKRB->setChecked(true);
-    break;
-    case Region::NTSCJ:
-        ui->ntscJRB->setChecked(true);
-    break;
-    case Region::PAL:
-        ui->palRB->setChecked(true);
-    break;
-    default:
-    break;
+        case Region::NTSCU:
+            ui->ntscURB->setChecked(true);
+            break;
+        case Region::NTSCK:
+            ui->ntscKRB->setChecked(true);
+            break;
+        case Region::NTSCJ:
+            ui->ntscJRB->setChecked(true);
+            break;
+        case Region::PAL:
+            ui->palRB->setChecked(true);
+            break;
+        default:
+            break;
     }
 
     int count = 0;
@@ -123,10 +123,10 @@ QString SaveInfoDialog::regionString(Region region, StringType type) const
     QString file;
     switch(type)
     {
-    case Title:
-        file = "title"; break;
-    case Subtitle:
-        file = "subtitle"; break;
+        case Title:
+            file = "title"; break;
+        case Subtitle:
+            file = "subtitle"; break;
     }
 
     qDebug() << (char)region;
@@ -134,6 +134,8 @@ QString SaveInfoDialog::regionString(Region region, StringType type) const
     if (title.open(QFile::ReadOnly))
     {
         QString titleString = QString::fromUtf16((ushort*)title.readAll().data());
+        titleString.truncate(32);
+
         title.close();
         return titleString;
     }

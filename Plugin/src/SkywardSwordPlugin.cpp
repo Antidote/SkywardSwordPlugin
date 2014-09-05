@@ -73,8 +73,6 @@ void SkywardSwordPlugin::initialize(MainWindowBase *mainWindow)
 
     if (settings()->updateCheckOnStart())
         doUpdate();
-
-    qDebug() << fromWiiTime(qFromBigEndian((quint64)0x476C255484D11B86));
 }
 
 QString SkywardSwordPlugin::filter() const
@@ -94,7 +92,7 @@ QString SkywardSwordPlugin::name() const
 
 QString SkywardSwordPlugin::author() const
 {
-    return "Phillip \"Antidote\" Stephens 1324";
+    return "Phillip \"Antidote\" Stephens";
 }
 
 QString SkywardSwordPlugin::version() const

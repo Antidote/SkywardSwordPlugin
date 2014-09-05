@@ -87,7 +87,6 @@ void ImportExportQuestDialog::onPathPressed()
         {
             Athena::io::ZQuestFileReader reader(path.toStdString());
             m_quest = reader.read();
-            qDebug() << m_quest->gameString().c_str();
             if (m_quest->data() && m_quest->gameString() == "Skyward Sword")
             {
                 if (m_quest->length() < 0x53C0)
@@ -102,9 +101,18 @@ void ImportExportQuestDialog::onPathPressed()
                 char* skipData = new char[0x24];
 
                 memcpy(gameData, data->GameData, 0x53C0);
+                union RegionTest
+                {
+                    struct
+                    {
+                        atUint32 gameId : 24;
+                        atUint32 region : 8;
+                    };
+                };
+
                 Region region = (Region)(qFromBigEndian(*(quint32*)gameData) & 0x000000FF);
 
-                if (m_quest->length() == 0x53E4)
+                 if (m_quest->length() == 0x53E4)
                     memcpy(skipData, data->SkipData, 0x24);
                 else
                     memset(skipData, 0, 0x24);

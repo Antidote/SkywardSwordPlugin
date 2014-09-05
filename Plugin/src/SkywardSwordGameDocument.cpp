@@ -95,7 +95,6 @@ SkywardSwordGameDocument::~SkywardSwordGameDocument()
     }
 }
 
-
 bool SkywardSwordGameDocument::loadFile()
 {
     if (QFileInfo(filePath()).suffix() == "bin")
@@ -179,7 +178,7 @@ bool SkywardSwordGameDocument::supportsWiiSave() const
 
 bool SkywardSwordGameDocument::exportWiiSave()
 {
-    if (!m_keyManager->isValid())
+    if (m_keyManager == nullptr || !m_keyManager->isValid())
         return false;
     SkywardSwordWidget* mainWidget = qobject_cast<SkywardSwordWidget*>(m_widget);
     Q_ASSERT(mainWidget != NULL);

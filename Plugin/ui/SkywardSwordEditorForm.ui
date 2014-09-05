@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>978</width>
-    <height>599</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -96,7 +96,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>3</number>
      </property>
      <property name="documentMode">
       <bool>true</bool>
@@ -2899,7 +2899,9 @@
         <string>Deletes the currently selected Quest</string>
        </property>
        <property name="icon">
-        <iconset theme="edit-delete"/>
+        <iconset theme="edit-delete">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -2912,7 +2914,9 @@
         <string>Creates a new Quest in the currently selected slot</string>
        </property>
        <property name="icon">
-        <iconset theme="document-new"/>
+        <iconset theme="document-new">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -2925,7 +2929,9 @@
         <string>Copies the currently selected Quest to the slot specified in the copy dialog</string>
        </property>
        <property name="icon">
-        <iconset theme="edit-copy"/>
+        <iconset theme="edit-copy">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -2938,7 +2944,9 @@
         <string>Imports a Quest from a ZQuest archive</string>
        </property>
        <property name="icon">
-        <iconset theme="document-open"/>
+        <iconset theme="document-open">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -2951,7 +2959,9 @@
         <string>Exports the selected Quest to a ZQuest archive</string>
        </property>
        <property name="icon">
-        <iconset theme="package-x-generic"/>
+        <iconset theme="package-x-generic">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -3376,7 +3386,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>84</x>
-     <y>610</y>
+     <y>605</y>
     </hint>
    </hints>
   </connection>
@@ -5216,7 +5226,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>716</x>
-     <y>617</y>
+     <y>605</y>
     </hint>
    </hints>
   </connection>
@@ -5547,12 +5557,12 @@
    <slot>setAllSkips()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>573</y>
+     <x>52</x>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>97</x>
-     <y>647</y>
+     <y>605</y>
     </hint>
    </hints>
   </connection>
@@ -5563,12 +5573,12 @@
    <slot>clearAllSkips()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>429</x>
-     <y>588</y>
+     <x>93</x>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
      <x>211</x>
-     <y>643</y>
+     <y>605</y>
     </hint>
    </hints>
   </connection>
@@ -5579,8 +5589,8 @@
    <slot>onCopy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>233</x>
-     <y>43</y>
+     <x>141</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>475</x>
@@ -5595,8 +5605,8 @@
    <slot>onCreate()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>50</y>
+     <x>97</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>336</x>
@@ -5611,8 +5621,8 @@
    <slot>onImportExport()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
-     <y>43</y>
+     <x>229</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>175</x>
@@ -5627,8 +5637,8 @@
    <slot>onImportExport()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>47</y>
+     <x>185</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>62</x>
@@ -5643,12 +5653,28 @@
    <slot>onDelete()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>50</y>
+     <x>53</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>239</x>
      <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cutsceneModeChkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SkywardSwordEditorForm</receiver>
+   <slot>setCutsceneMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
@@ -5703,5 +5729,6 @@
   <slot>setAllSkips()</slot>
   <slot>clearAllSkips()</slot>
   <slot>onImportExport()</slot>
+  <slot>setCutsceneMode(bool)</slot>
  </slots>
 </ui>
