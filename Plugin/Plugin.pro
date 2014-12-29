@@ -21,7 +21,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #DEFINES += SS_INTERNAL
 TARGET = skywardswordplugin
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin c++11
 TRANSLATIONS += \
     lang/en_ES.ts
 
@@ -36,11 +36,7 @@ INCLUDEPATH += \
     ../Athena/include \
     ../Updater/include
 
-QMAKE_CXXFLAGS = -std=c++11
-
-LIBS += \
-    -L$$OUT_PWD/../PluginFramework -lpluginframework \
-    -L$$OUT_PWD/../Updater -lupdater
+unix:QMAKE_CXXFLAGS = -std=c++11
 
 CONFIG(release, release|debug){
     LIBS += -L$$OUT_PWD/../Athena/lib -lAthena
@@ -62,6 +58,11 @@ CONFIG(debug, debug|release){
     OBJECTS_DIR = obj/debug
     MOC_DIR = moc/debug
 }
+
+LIBS += \
+    -lz \
+    -L$$OUT_PWD/../PluginFramework -lpluginframework \
+    -L$$OUT_PWD/../Updater -lupdater
 
 SOURCES += \
     src/SkywardSwordPlugin.cpp \

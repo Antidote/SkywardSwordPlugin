@@ -18,6 +18,7 @@
 
 #include <QDateTime>
 #include <QPoint>
+#include <QImage>
 
 enum class Region
 {

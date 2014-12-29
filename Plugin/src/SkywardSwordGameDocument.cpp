@@ -287,8 +287,8 @@ bool SkywardSwordGameDocument::exportWiiSave()
         writer.writeBytes((atInt8*)m_skipData, 0x80);
         writer.save();
 
-        save->addFile("/wiiking2.sav", new Athena::WiiFile("wiiking2.sav", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, writer.data(), writer.length()));
-        save->addFile("/skip.dat", new Athena::WiiFile("skip.dat", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, (atUint8*)m_skipData, 0x80));
+        save->addFile(new Athena::WiiFile("wiiking2.sav", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, writer.data(), writer.length()));
+        save->addFile(new Athena::WiiFile("skip.dat", Athena::WiiFile::GroupRW | Athena::WiiFile::OwnerRW, (atUint8*)m_skipData, 0x80));
     }
     catch(...)
     {
