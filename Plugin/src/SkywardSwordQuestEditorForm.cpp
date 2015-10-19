@@ -196,6 +196,7 @@ void SkywardSwordQuestEditorForm::onImportExport()
 void SkywardSwordQuestEditorForm::setRegion(Region region)
 {
     m_region = region;
+    emit modified();
 }
 
 Playtime SkywardSwordQuestEditorForm::playtime() const
@@ -204,19 +205,29 @@ Playtime SkywardSwordQuestEditorForm::playtime() const
         return Playtime();
     Playtime playTime;
     quint64 tmp = qFromBigEndian(*(quint64*)(m_gameData));
-    playTime.Hours   = (((tmp / TICKS_PER_SECOND) / 60) / 60);
-    playTime.Minutes = (( tmp / TICKS_PER_SECOND) / 60) % 60;
-    playTime.Seconds = (( tmp / TICKS_PER_SECOND) % 60);
+    playTime.Hours        = WIITicksToSeconds     (tmp) / 60 / 60; //(((tmp / TICKS_PER_SECOND) / 60) / 60);
+    playTime.Minutes      = WIITicksToSeconds     (tmp) / 60 % 60; //( tmp / TICKS_PER_SECOND) / 60) % 60;
+    playTime.Seconds      = WIITicksToSeconds     (tmp) % 60;      //(( tmp / TICKS_PER_SECOND) % 60);
+    playTime.Milliseconds = WIITicksToMilliseconds(tmp) % 1000;
+    playTime.Microseconds = WIITicksToMicroseconds(tmp) % 1000;
     return playTime;
 }
 
 void SkywardSwordQuestEditorForm::setPlaytime(Playtime val)
 {
-    quint64 totalSeconds = 0;
-    totalSeconds += ( val.Hours   * 60) * 60;
-    totalSeconds += ( val.Minutes * 60);
-    totalSeconds +=   val.Seconds;
-    *(quint64*)(m_gameData) = qToBigEndian(TICKS_PER_SECOND * totalSeconds);
+    quint64 totalTime = 0;
+    quint64 oldVal = qFromBigEndian(*(quint64*)(m_gameData));
+
+    totalTime += WIISecondsToTicks     ((val.Hours   * 60) * 60);
+    totalTime += WIISecondsToTicks     ( val.Minutes * 60);
+    totalTime += WIISecondsToTicks     ( val.Seconds);
+    totalTime += WIIMillisecondsToTicks( val.Milliseconds);
+    quint64 test = WIIMicrosecondsToTicks( val.Microseconds);
+
+    totalTime += test;
+    *(quint64*)(m_gameData) = qToBigEndian<quint64>(totalTime);
+
+    quint64 newVal = qFromBigEndian(*(quint64*)(m_gameData));
 
     emit modified();
 }

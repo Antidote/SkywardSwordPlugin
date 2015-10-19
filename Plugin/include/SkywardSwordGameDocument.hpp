@@ -19,6 +19,7 @@
 #include <GameDocument.hpp>
 #include <QObject>
 #include "Common.hpp"
+#include <memory>
 #include <Athena/Types.hpp>
 
 class CopyWidget;
@@ -27,7 +28,7 @@ namespace Athena
 {
 namespace io
 {
-class BinaryReader;
+class IStreamReader;
 }
 }
 
@@ -42,6 +43,7 @@ public:
 
     bool loadFile();
 
+public slots:
     bool reload();
     bool supportsWiiSave() const;
     bool exportWiiSave();
@@ -58,8 +60,9 @@ private slots:
     void onCopy(SkywardSwordQuestEditorForm* source);
     void onTabMoved(int left, int right);
 private:
-    bool loadData(Athena::io::BinaryReader reader);
-    atUint8*       m_skipData;
+    Region m_region;
+    bool loadData(Athena::io::IStreamReader& reader);
+    std::unique_ptr<atUint8[]> m_skipData;
     CopyWidget* m_copyWidget;
 };
 

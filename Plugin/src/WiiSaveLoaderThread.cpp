@@ -17,15 +17,10 @@ void WiiSaveLoaderThread::process()
     }
 
     Athena::WiiSave* ret = nullptr;
-    try
-    {
-        Athena::io::WiiSaveReader reader(m_path.toStdString());
-        ret = reader.readSave();
+    Athena::io::WiiSaveReader reader(m_path.toStdString());
+    ret = reader.readSave();
+    if (ret)
         emit finished(ret);
-    }
-    catch(const Athena::error::Exception& e)
-    {
-        delete ret;
-        emit error(QString::fromStdString(e.message()));
-    }
+    else
+        emit error("Error loading save, check application log for details");
 }

@@ -6,27 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>268</width>
-    <height>25</height>
+    <width>414</width>
+    <height>28</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>232</width>
-    <height>25</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
    <string notr="true">/* Should the text be visible? */
-#hourSepLbl[blink=&quot;false&quot;], #minSepLbl[blink=&quot;false&quot;], #secSepLbl[blink=&quot;false&quot;]
+#hourSepLbl[blink=&quot;false&quot;], #minSepLbl[blink=&quot;false&quot;], #secSepLbl[blink=&quot;false&quot;], #msSepLbl[blink=&quot;false&quot;],  #usSepLbl[blink=&quot;false&quot;]
 {
         color: black; /* show the text*/
 }
 /* else */
-#hourSepLbl[blink=&quot;true&quot;], #minSepLbl[blink=&quot;true&quot;], #secSepLbl[blink=&quot;true&quot;]
+#hourSepLbl[blink=&quot;true&quot;], #minSepLbl[blink=&quot;true&quot;], #secSepLbl[blink=&quot;true&quot;], #msSepLbl[blink=&quot;true&quot;],  #usSepLbl[blink=&quot;true&quot;]
 {
         color: rgba(0, 0, 0, 0); /* hide the text */
 }</string>
@@ -47,8 +41,30 @@
    <property name="horizontalSpacing">
     <number>0</number>
    </property>
-   <item row="0" column="1">
-    <widget class="QSpinBox" name="hoursSpinBox">
+   <item row="0" column="0">
+    <widget class="QLabel" name="playTimeLbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>74</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Play Time:</string>
+     </property>
+     <property name="buddy">
+      <cstring>hoursSpinBox</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QSpinBox" name="msSpinBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -61,16 +77,32 @@
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
-     <property name="accelerated">
-      <bool>false</bool>
-     </property>
      <property name="maximum">
-      <number>999</number>
+      <number>1000</number>
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QLabel" name="secSepLbl">
+   <item row="0" column="9">
+    <widget class="QSpinBox" name="usSpinBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buttonSymbols">
+      <enum>QAbstractSpinBox::NoButtons</enum>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QLabel" name="usSepLbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -78,7 +110,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>:</string>
+      <string>.</string>
      </property>
     </widget>
    </item>
@@ -104,6 +136,67 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="4">
+    <widget class="QLabel" name="secSepLbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="10">
+    <widget class="QPushButton" name="clearTimePushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#clearTimePushButton {
+	margin: 0;
+	padding-top: 4px;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding-bottom: 4px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="QLabel" name="msSepLbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="minSepLbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>:</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="5">
     <widget class="QSpinBox" name="secsSpinBox">
      <property name="sizePolicy">
@@ -126,45 +219,25 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="minSepLbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="playTimeLbl">
-     <property name="text">
-      <string>Play Time:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="6">
-    <widget class="QPushButton" name="clearTimePushButton">
+   <item row="0" column="1">
+    <widget class="QSpinBox" name="hoursSpinBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">#clearTimePushButton {
-	margin: 0;
-	padding-top: 4px;
-	padding-left: 2px;
-	padding-right: 2px;
-	padding-bottom: 4px;
-}</string>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <property name="text">
-      <string>Clear</string>
+     <property name="buttonSymbols">
+      <enum>QAbstractSpinBox::NoButtons</enum>
+     </property>
+     <property name="accelerated">
+      <bool>false</bool>
+     </property>
+     <property name="maximum">
+      <number>999</number>
      </property>
     </widget>
    </item>
@@ -179,7 +252,7 @@
    <slot>clearTime()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>353</x>
+     <x>582</x>
      <y>14</y>
     </hint>
     <hint type="destinationlabel">
@@ -188,8 +261,89 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>hoursSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PlaytimeWidget</receiver>
+   <slot>valueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>9</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>24</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>msSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PlaytimeWidget</receiver>
+   <slot>valueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>secsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PlaytimeWidget</receiver>
+   <slot>valueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>307</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>minsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PlaytimeWidget</receiver>
+   <slot>valueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>usSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PlaytimeWidget</receiver>
+   <slot>valueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>13</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearTime()</slot>
+  <slot>valueChanged()</slot>
  </slots>
 </ui>

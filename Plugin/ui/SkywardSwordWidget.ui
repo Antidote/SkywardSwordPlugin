@@ -112,7 +112,7 @@
    <sender>regionBtnGroup</sender>
    <signal>buttonToggled(QAbstractButton*,bool)</signal>
    <receiver>SkywardSwordWidget</receiver>
-   <slot>onButtonClicked(QAbstractButton*,bool)</slot>
+   <slot>onButtonToggled(QAbstractButton*,bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -126,7 +126,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>onButtonClicked(QAbstractButton*,bool)</slot>
+  <slot>onButtonToggled(QAbstractButton*,bool)</slot>
   <slot>infoButtonClicked()</slot>
  </slots>
  <buttongroups>

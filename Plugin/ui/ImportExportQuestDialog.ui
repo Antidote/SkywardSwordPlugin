@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>557</width>
-    <height>244</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,7 +111,7 @@
    <item row="1" column="1" colspan="2">
     <widget class="QSpinBox" name="rupeeSpinBox">
      <property name="maximum">
-      <number>9000</number>
+      <number>9900</number>
      </property>
     </widget>
    </item>

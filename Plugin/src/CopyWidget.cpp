@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#include "include/CopyWidget.hpp"
+#include "CopyWidget.hpp"
 #include "ui_CopyWidget.h"
 #include <QMouseEvent>
 #include <QDebug>

@@ -20,13 +20,12 @@
 #include "Constants.hpp"
 #include <MainWindowBase.hpp>
 #include <DocumentBase.hpp>
-#include <Athena/Exception.hpp>
 #include "Common.hpp"
 
 #include <QFileInfo>
 #include <QIcon>
 #include <QApplication>
-#include <Athena/BinaryReader.hpp>
+#include <Athena/FileReader.hpp>
 #include <Updater.hpp>
 #include <QMessageBox>
 #include <QMenuBar>
@@ -160,9 +159,9 @@ bool SkywardSwordPlugin::canLoad(const QString& filename)
     atInt32 gameId = -1;
     if (QFileInfo(filename).suffix() == "bin")
     {
-        try
+        Athena::io::FileReader reader(filename.toStdString());
+        if (reader.isOpen())
         {
-            Athena::io::BinaryReader reader(filename.toStdString());
             reader.setEndian(Athena::Endian::BigEndian);
             reader.seek(0xF124);
             gameId = reader.readUint32();
@@ -171,24 +170,15 @@ bool SkywardSwordPlugin::canLoad(const QString& filename)
             else
                 gameId = -1;
         }
-        catch(...)
-        {
-            // Hide errors
-        }
     }
 
     if (gameId == -1)
     {
-        try
+        Athena::io::FileReader reader(filename.toStdString());
+        if (reader.isOpen())
         {
-            Athena::io::BinaryReader reader(filename.toStdString());
             reader.setEndian(Athena::Endian::BigEndian);
             gameId = reader.readUint32();
-
-        }
-        catch(...)
-        {
-            // Hide errors
         }
     }
 

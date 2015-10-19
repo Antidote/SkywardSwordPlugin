@@ -36,14 +36,12 @@ void SkywardSwordWidget::setRegion(Region region)
 {
     switch(region)
     {
-    case Region::NTSCU: ui->ntscURB->setChecked(true); break;
-    case Region::NTSCK: ui->ntscKRB->setChecked(true); break;
-    case Region::NTSCJ: ui->ntscJRB->setChecked(true); break;
-    case Region::PAL:   ui->palRB  ->setChecked(true); break;
-    default: return;
+        case Region::NTSCU: ui->ntscURB->setChecked(true); break;
+        case Region::NTSCK: ui->ntscKRB->setChecked(true); break;
+        case Region::NTSCJ: ui->ntscJRB->setChecked(true); break;
+        case Region::PAL:   ui->palRB  ->setChecked(true); break;
+        default: return;
     }
-
-    emit regionChanged(region);
 }
 
 Region SkywardSwordWidget::region() const
@@ -61,7 +59,7 @@ Region SkywardSwordWidget::region() const
     return SkywardSwordPlugin::instance()->settings()->defaultRegion();
 }
 
-void SkywardSwordWidget::onButtonClicked(QAbstractButton* btn, bool val)
+void SkywardSwordWidget::onButtonToggled(QAbstractButton* btn, bool val)
 {
     if (btn == ui->ntscURB && val)
         emit regionChanged(Region::NTSCU);

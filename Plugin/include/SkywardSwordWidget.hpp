@@ -41,7 +41,8 @@ signals:
     void regionChanged(Region);
     void infoButtonClicked();
 public slots:
-    void onButtonClicked(QAbstractButton* btn, bool val);
+    void onButtonToggled(QAbstractButton* btn, bool val);
+    void onRegionChanged(int val);
 private:
     Ui::SkywardSwordWidget* ui;
 };

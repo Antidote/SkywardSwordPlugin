@@ -21,7 +21,6 @@
 #include <Athena/ZQuestFile.hpp>
 #include <Athena/ZQuestFileWriter.hpp>
 #include <Athena/ZQuestFileReader.hpp>
-#include <Athena/Exception.hpp>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
@@ -83,9 +82,9 @@ void ImportExportQuestDialog::onPathPressed()
     if (!path.isEmpty())
     {
         ui->importLineEdit->setText(path);
-        try
+        Athena::io::ZQuestFileReader reader(path.toStdString());
+        if (!reader.hasError())
         {
-            Athena::io::ZQuestFileReader reader(path.toStdString());
             m_quest = reader.read();
             if (m_quest->data() && m_quest->gameString() == "Skyward Sword")
             {
@@ -101,23 +100,13 @@ void ImportExportQuestDialog::onPathPressed()
                 char* skipData = new char[0x24];
 
                 memcpy(gameData, data->GameData, 0x53C0);
-                union RegionTest
-                {
-                    struct
-                    {
-                        atUint32 gameId : 24;
-                        atUint32 region : 8;
-                    };
-                };
-
-                Region region = (Region)(qFromBigEndian(*(quint32*)gameData) & 0x000000FF);
 
                  if (m_quest->length() == 0x53E4)
                     memcpy(skipData, data->SkipData, 0x24);
                 else
                     memset(skipData, 0, 0x24);
 
-                SkywardSwordQuestEditorForm game(gameData, skipData, region);
+                SkywardSwordQuestEditorForm game(gameData, skipData, Region::NTSCU);
                 ui->nameLineEdit->setText(game.playerName());
                 ui->rupeeSpinBox->setValue(game.rupees());
                 ui->hpCurrentSpinBox->setValue(game.currentHP());
@@ -132,11 +121,10 @@ void ImportExportQuestDialog::onPathPressed()
                 ui->statusLabel->setText("Failed to load, check the application log");
             }
         }
-        catch(Athena::error::Exception e)
+        else
         {
             m_quest = NULL;
             ui->statusLabel->setText("Failed to load, check the application log");
-            qWarning() << QString::fromStdString(e.message());
         }
     }
 }
@@ -147,63 +135,55 @@ void ImportExportQuestDialog::accept()
 
     if (editorForm)
     {
-        try
+        if (m_mode == Export)
         {
-            if (m_mode == Export)
+            QString filename = QFileDialog::getSaveFileName(this, tr("Export Quest"), QString(), "ZQuest files (*.zquest)");
+            if (!filename.isEmpty())
             {
-                QString filename = QFileDialog::getSaveFileName(this, tr("Export Quest"), QString(), "ZQuest files (*.zquest)");
-                if (!filename.isEmpty())
-                {
-                    Athena::ZQuestFile* zquest = new Athena::ZQuestFile();
-                    ExportFmt* exportData = new ExportFmt;
-                    memcpy(exportData->GameData, editorForm->gameData(), 0x53C0);
-                    memcpy(exportData->SkipData, editorForm->skipData(), 0x24);
+                // TODO: Make a DNA for this
+                std::unique_ptr<Athena::ZQuestFile> zquest(new Athena::ZQuestFile());
+                ExportFmt* exportData = new ExportFmt;
+                memcpy(exportData->GameData, editorForm->gameData(), 0x53C0);
+                memcpy(exportData->SkipData, editorForm->skipData(), 0x24);
+                std::unique_ptr<atUint8[]> ptr((atUint8*)exportData);
+                zquest->setData(std::move(ptr), sizeof(ExportFmt));
 
-                    zquest->setData((atUint8*)exportData, sizeof(ExportFmt));
+                // LOZ:Skyward Sword
+                zquest->setGameString("Skyward Sword");
+                // LOZ:Skyward sword is always big endian
+                zquest->setEndian(Athena::Endian::BigEndian);
 
-                    // LOZ:Skyward Sword
-                    zquest->setGameString("Skyward Sword");
-                    // LOZ:Skyward sword is always big endian
-                    zquest->setEndian(Athena::Endian::BigEndian);
-
-                    Athena::io::ZQuestFileWriter writer(filename.toStdString());
-                    writer.write(zquest, ui->compressChkBox->isChecked());
-                    delete zquest;
-                }
+                Athena::io::ZQuestFileWriter writer(filename.toStdString());
+                writer.write(zquest.get(), ui->compressChkBox->isChecked());
             }
-            else if (m_quest)
+        }
+        else if (m_quest)
+        {
+            if (!ui->importLineEdit->text().isEmpty())
             {
-                if (!ui->importLineEdit->text().isEmpty())
-                {
-                    ExportFmt* data = (ExportFmt*)m_quest->data();
-                    char* gameData = new char[0x53C0];
-                    char* skipData = new char[0x24];
-                    memcpy(gameData, data->GameData, 0x53C0);
+                ExportFmt* data = (ExportFmt*)m_quest->data();
+                char* gameData = new char[0x53C0];
+                char* skipData = new char[0x24];
+                memcpy(gameData, data->GameData, 0x53C0);
 
-                    if (m_quest->length() == 0x53E4)
-                        memcpy(skipData, data->SkipData, 0x24);
-                    else
-                        memset(skipData, 0, 0x24);
-
-                    editorForm->setGameData(QByteArray(gameData, 0x53C0));
-                    editorForm->setSkipData(QByteArray(skipData, 0x24));
-                    editorForm->setPlayerName(ui->nameLineEdit->text());
-                    editorForm->setRupees(ui->rupeeSpinBox->value());
-                    editorForm->setCurrentHP(ui->hpCurrentSpinBox->value());
-                    editorForm->setTotalHP(ui->hpMaxSpinBox->value());
-                }
+                if (m_quest->length() == 0x53E4)
+                    memcpy(skipData, data->SkipData, 0x24);
                 else
-                {
-                    QMessageBox mbox(QMessageBox::Warning, tr("No file specified"), tr("No file was selected to import"));
-                    mbox.exec();
-                }
+                    memset(skipData, 0, 0x24);
+
+                editorForm->setGameData(QByteArray(gameData, 0x53C0));
+                editorForm->setSkipData(QByteArray(skipData, 0x24));
+                editorForm->setPlayerName(ui->nameLineEdit->text());
+                editorForm->setRupees(ui->rupeeSpinBox->value());
+                editorForm->setCurrentHP(ui->hpCurrentSpinBox->value());
+                editorForm->setTotalHP(ui->hpMaxSpinBox->value());
+            }
+            else
+            {
+                QMessageBox mbox(QMessageBox::Warning, tr("No file specified"), tr("No file was selected to import"));
+                mbox.exec();
             }
         }
-        catch(Athena::error::Exception e)
-        {
-            qCritical() << QString::fromStdString(e.message());
-        }
-
     }
     QDialog::accept();
 }

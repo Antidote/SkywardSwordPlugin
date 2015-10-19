@@ -129,8 +129,8 @@ QString SaveInfoDialog::regionString(Region region, StringType type) const
             file = "subtitle"; break;
     }
 
-    qDebug() << (char)region;
     QFile title(QString(":/BannerData/%1/%2.bin").arg((char)region).arg(file));
+    qDebug() << title.fileName();
     if (title.open(QFile::ReadOnly))
     {
         QString titleString = QString::fromUtf16((ushort*)title.readAll().data());

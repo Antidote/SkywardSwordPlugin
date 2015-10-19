@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>246</height>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
      </property>
      <widget class="QWidget" name="playerNames">
       <attribute name="icon">
-       <iconset resource="../resources/resources.qrc">
+       <iconset resource="../resources/skyward_sword_resources.qrc">
         <normaloff>:/icons/Game1</normaloff>:/icons/Game1</iconset>
       </attribute>
       <attribute name="title">
@@ -149,7 +149,7 @@
      </widget>
      <widget class="QWidget" name="regionTab">
       <attribute name="icon">
-       <iconset resource="../resources/resources.qrc">
+       <iconset resource="../resources/skyward_sword_resources.qrc">
         <normaloff>:/icons/flags/_unknown.png</normaloff>:/icons/flags/_unknown.png</iconset>
       </attribute>
       <attribute name="title">
@@ -238,7 +238,7 @@
      </widget>
      <widget class="QWidget" name="updateTab">
       <attribute name="icon">
-       <iconset resource="../resources/resources.qrc">
+       <iconset resource="../resources/skyward_sword_resources.qrc">
         <normaloff>:/Bags/BombBagLarge</normaloff>:/Bags/BombBagLarge</iconset>
       </attribute>
       <attribute name="title">
@@ -331,7 +331,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="../resources/skyward_sword_resources.qrc"/>
  </resources>
  <connections>
   <connection>

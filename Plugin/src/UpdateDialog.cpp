@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Sakura Suite.  If not, see <http://www.gnu.org/licenses/>
 
-#include "include/UpdateDialog.hpp"
+#include "UpdateDialog.hpp"
 #include "ui_UpdateDialog.h"
 
 UpdateDialog::UpdateDialog(QWidget *parent) :

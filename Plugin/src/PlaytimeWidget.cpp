@@ -26,9 +26,6 @@ PlaytimeWidget::PlaytimeWidget(QWidget *parent) :
     m_blinkTimer.setInterval(qApp->cursorFlashTime()); // Blink according to the cursor's flash time
     m_blinkTimer.start();
     connect(&m_blinkTimer, SIGNAL(timeout()), this, SLOT(blinkText()));
-    connect(ui->hoursSpinBox, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
-    connect(ui->minsSpinBox,  SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
-    connect(ui->secsSpinBox,  SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
 }
 
 PlaytimeWidget::~PlaytimeWidget()
@@ -41,6 +38,8 @@ void PlaytimeWidget::setPlaytime(Playtime val)
     ui->hoursSpinBox->setValue(val.Hours);
     ui->minsSpinBox ->setValue(val.Minutes);
     ui->secsSpinBox ->setValue(val.Seconds);
+    ui->msSpinBox   ->setValue(val.Milliseconds);
+    ui->usSpinBox   ->setValue(val.Microseconds);
 }
 
 void PlaytimeWidget::blinkText()
@@ -51,19 +50,33 @@ void PlaytimeWidget::blinkText()
     {
         ui->minSepLbl->setProperty("blink", m_blink);
         ui->secSepLbl->setProperty("blink", m_blink);
+        ui->msSepLbl ->setProperty("blink", m_blink);
+        ui->usSepLbl ->setProperty("blink", m_blink);
         style()->polish(ui->minSepLbl);
         style()->polish(ui->secSepLbl);
+        style()->polish(ui->msSepLbl);
+        style()->polish(ui->usSepLbl);
     }
 }
 
 void PlaytimeWidget::valueChanged()
 {
-    emit playtimeChanged((Playtime){ui->hoursSpinBox->value(), ui->minsSpinBox->value(), ui->secsSpinBox->value()});
+    Playtime ret;
+    ret.Hours = ui->hoursSpinBox->value();
+    ret.Minutes = ui->minsSpinBox->value();
+    ret.Seconds = ui->secsSpinBox->value();
+    ret.Milliseconds = ui->msSpinBox->value();
+    ret.Microseconds = ui->usSpinBox->value();
+
+    emit playtimeChanged(ret);
 }
+
 
 void PlaytimeWidget::clearTime()
 {
     ui->hoursSpinBox->setValue(0);
-    ui->minsSpinBox->setValue(0);
-    ui->secsSpinBox->setValue(0);
+    ui->minsSpinBox ->setValue(0);
+    ui->secsSpinBox ->setValue(0);
+    ui->msSpinBox   ->setValue(0);
+    ui->usSpinBox   ->setValue(0);
 }

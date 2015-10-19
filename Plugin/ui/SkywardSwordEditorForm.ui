@@ -96,7 +96,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="documentMode">
       <bool>true</bool>
@@ -339,7 +339,7 @@
           <item row="1" column="1" colspan="3">
            <widget class="QSpinBox" name="rupeeSpinBox">
             <property name="maximum">
-             <number>9999</number>
+             <number>9900</number>
             </property>
            </widget>
           </item>
@@ -791,7 +791,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/Beetle</normaloff>:/Weapons/Beetle</iconset>
               </property>
               <property name="iconSize">
@@ -814,7 +814,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/HookBeetle</normaloff>:/Weapons/HookBeetle</iconset>
               </property>
               <property name="iconSize">
@@ -837,7 +837,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/SpeedBeetle</normaloff>:/Weapons/SpeedBeetle</iconset>
               </property>
               <property name="iconSize">
@@ -860,7 +860,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/ToughBeetle</normaloff>:/Weapons/ToughBeetle</iconset>
               </property>
               <property name="iconSize">
@@ -901,7 +901,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/Bow</normaloff>:/Weapons/Bow</iconset>
               </property>
               <property name="iconSize">
@@ -918,7 +918,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/IronBow</normaloff>:/Weapons/IronBow</iconset>
               </property>
               <property name="iconSize">
@@ -941,7 +941,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resources.qrc">
+               <iconset resource="../resources/skyward_sword_resources.qrc">
                 <normaloff>:/Weapons/SacredBow</normaloff>:/Weapons/SacredBow</iconset>
               </property>
               <property name="iconSize">
@@ -1000,7 +1000,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/Bugnet</normaloff>:/Weapons/Bugnet</iconset>
             </property>
             <property name="iconSize">
@@ -1023,7 +1023,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/BigBugnet</normaloff>:/Weapons/BigBugnet</iconset>
             </property>
             <property name="iconSize">
@@ -1070,7 +1070,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/SlingShot</normaloff>:/Weapons/SlingShot</iconset>
             </property>
             <property name="iconSize">
@@ -1093,7 +1093,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/ScatterShot</normaloff>:/Weapons/ScatterShot</iconset>
             </property>
             <property name="iconSize">
@@ -1139,7 +1139,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="smallWalletChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Wallets/SmallWallet</normaloff>:/Wallets/SmallWallet</iconset>
             </property>
             <property name="iconSize">
@@ -1153,7 +1153,7 @@
           <item row="4" column="0">
            <widget class="QCheckBox" name="tycoonWalletChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Wallets/TycoonWallet</normaloff>:/Wallets/TycoonWallet</iconset>
             </property>
             <property name="iconSize">
@@ -1167,7 +1167,7 @@
           <item row="3" column="0">
            <widget class="QCheckBox" name="giantWalletChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Wallets/GiantWallet</normaloff>:/Wallets/GiantWallet</iconset>
             </property>
             <property name="iconSize">
@@ -1181,7 +1181,7 @@
           <item row="2" column="0">
            <widget class="QCheckBox" name="bigWalletChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Wallets/BigWallet</normaloff>:/Wallets/BigWallet</iconset>
             </property>
             <property name="iconSize">
@@ -1195,7 +1195,7 @@
           <item row="1" column="0">
            <widget class="QCheckBox" name="mediumWalletChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Wallets/MediumWallet</normaloff>:/Wallets/MediumWallet</iconset>
             </property>
             <property name="iconSize">
@@ -1249,7 +1249,7 @@
              <string>Mole Mitts</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Equipment/MoleMitts</normaloff>:/Equipment/MoleMitts</iconset>
             </property>
             <property name="iconSize">
@@ -1272,7 +1272,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/DoubleClawshot</normaloff>:/Weapons/DoubleClawshot</iconset>
             </property>
             <property name="iconSize">
@@ -1292,7 +1292,7 @@
              <string>Sail Cloth</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Equipment/SailCloth</normaloff>:/Equipment/SailCloth</iconset>
             </property>
             <property name="iconSize">
@@ -1315,7 +1315,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/Harp</normaloff>:/Weapons/Harp</iconset>
             </property>
             <property name="iconSize">
@@ -1329,7 +1329,7 @@
           <item row="7" column="1">
            <widget class="QCheckBox" name="dragonScaleChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Equipment/WaterDragonScale</normaloff>:/Equipment/WaterDragonScale</iconset>
             </property>
             <property name="iconSize">
@@ -1352,7 +1352,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/GustBellows</normaloff>:/Weapons/GustBellows</iconset>
             </property>
             <property name="iconSize">
@@ -1375,7 +1375,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/Whip</normaloff>:/Weapons/Whip</iconset>
             </property>
             <property name="iconSize">
@@ -1395,7 +1395,7 @@
              <string>Digging Mitts</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Equipment/DiggingMitts</normaloff>:/Equipment/DiggingMitts</iconset>
             </property>
             <property name="iconSize">
@@ -1418,7 +1418,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Weapons/Bomb</normaloff>:/Weapons/Bomb</iconset>
             </property>
             <property name="iconSize">
@@ -1432,7 +1432,7 @@
           <item row="8" column="0" rowspan="2">
            <widget class="QCheckBox" name="fireEaringsChkBox">
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Equipment/FireShieldEarings</normaloff>:/Equipment/FireShieldEarings</iconset>
             </property>
             <property name="iconSize">
@@ -1479,7 +1479,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/GoddessSword</normaloff>:/Swords/GoddessSword</iconset>
             </property>
             <property name="iconSize">
@@ -1502,7 +1502,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/MasterSword</normaloff>:/Swords/MasterSword</iconset>
             </property>
             <property name="iconSize">
@@ -1522,7 +1522,7 @@
              <string>True Master Sword</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/TrueMasterSword</normaloff>:/Swords/TrueMasterSword</iconset>
             </property>
             <property name="iconSize">
@@ -1545,7 +1545,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/LongSword</normaloff>:/Swords/LongSword</iconset>
             </property>
             <property name="iconSize">
@@ -1565,7 +1565,7 @@
              <string>Goddess White Sword</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/GoddessWhiteSword</normaloff>:/Swords/GoddessWhiteSword</iconset>
             </property>
             <property name="iconSize">
@@ -1588,7 +1588,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Swords/PracticeSword</normaloff>:/Swords/PracticeSword</iconset>
             </property>
             <property name="iconSize">
@@ -1665,7 +1665,7 @@
              <string>Crawlin's Letter</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/QuestItems/Letter</normaloff>:/QuestItems/Letter</iconset>
             </property>
             <property name="iconSize">
@@ -1688,7 +1688,7 @@
              <string>Beedle's Bug Cage</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/QuestItems/BugCage</normaloff>:/QuestItems/BugCage</iconset>
             </property>
             <property name="iconSize">
@@ -1711,7 +1711,7 @@
              <string>Rattle</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/QuestItems/Rattle</normaloff>:/QuestItems/Rattle</iconset>
             </property>
             <property name="iconSize">
@@ -1736,7 +1736,7 @@
             <string notr="true"/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources/resources.qrc">:/QuestItems/GratitudeCrystal</pixmap>
+            <pixmap resource="../resources/skyward_sword_resources.qrc">:/QuestItems/GratitudeCrystal</pixmap>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -1788,7 +1788,7 @@
              <string>Deku Hornet Larvae</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/DekuHornetLarvae</normaloff>:/Materials/DekuHornetLarvae</iconset>
             </property>
             <property name="iconSize">
@@ -1808,7 +1808,7 @@
              <string>Bird Feather</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/BirdFeather</normaloff>:/Materials/BirdFeather</iconset>
             </property>
             <property name="iconSize">
@@ -1828,7 +1828,7 @@
              <string>Tumbe Weed</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/TumbleWeed</normaloff>:/Materials/TumbleWeed</iconset>
             </property>
             <property name="iconSize">
@@ -1848,7 +1848,7 @@
              <string>Lizard Tail</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/LizardTail</normaloff>:/Materials/LizardTail</iconset>
             </property>
             <property name="iconSize">
@@ -1868,7 +1868,7 @@
              <string>Ancient Flower</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/AncientFlower</normaloff>:/Materials/AncientFlower</iconset>
             </property>
             <property name="iconSize">
@@ -1888,7 +1888,7 @@
              <string>Amber Relic</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/AmberRelic</normaloff>:/Materials/AmberRelic</iconset>
             </property>
             <property name="iconSize">
@@ -1908,7 +1908,7 @@
              <string>Dusk Relic</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/DuskRelic</normaloff>:/Materials/DuskRelic</iconset>
             </property>
             <property name="iconSize">
@@ -1928,7 +1928,7 @@
              <string>Jelly Blob</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/JellyBlob</normaloff>:/Materials/JellyBlob</iconset>
             </property>
             <property name="iconSize">
@@ -1948,7 +1948,7 @@
              <string>Ornamental Skull</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/OrnamentalSkull</normaloff>:/Materials/OrnamentalSkull</iconset>
             </property>
             <property name="iconSize">
@@ -1968,7 +1968,7 @@
              <string>Evil Crystal</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/EvilCrystal</normaloff>:/Materials/EvilCrystal</iconset>
             </property>
             <property name="iconSize">
@@ -1988,7 +1988,7 @@
              <string>Blue Bird Feather</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/BlueBirdFeather</normaloff>:/Materials/BlueBirdFeather</iconset>
             </property>
             <property name="iconSize">
@@ -2008,7 +2008,7 @@
              <string>Golden Skull</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/GoldenSkull</normaloff>:/Materials/GoldenSkull</iconset>
             </property>
             <property name="iconSize">
@@ -2028,7 +2028,7 @@
              <string>Goddess Plume</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/GoddessPlume</normaloff>:/Materials/GoddessPlume</iconset>
             </property>
             <property name="iconSize">
@@ -2048,7 +2048,7 @@
              <string>Monster Claw</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/MonsterClaw</normaloff>:/Materials/MonsterClaw</iconset>
             </property>
             <property name="iconSize">
@@ -2068,7 +2068,7 @@
              <string>Monster Horn</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/MonsterHorn</normaloff>:/Materials/MonsterHorn</iconset>
             </property>
             <property name="iconSize">
@@ -2088,7 +2088,7 @@
              <string>Eldin Ore</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Materials/EldinOre</normaloff>:/Materials/EldinOre</iconset>
             </property>
             <property name="iconSize">
@@ -2356,7 +2356,7 @@
              <string>Deku Hornet</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/DekuHornet</normaloff>:/Bugs/DekuHornet</iconset>
             </property>
             <property name="iconSize">
@@ -2376,7 +2376,7 @@
              <string>Blessed Butterfly</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/BlessedButterfly</normaloff>:/Bugs/BlessedButterfly</iconset>
             </property>
             <property name="iconSize">
@@ -2396,7 +2396,7 @@
              <string>Gerudo Dragonfly</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/GerudoDragonfly</normaloff>:/Bugs/GerudoDragonfly</iconset>
             </property>
             <property name="iconSize">
@@ -2416,7 +2416,7 @@
              <string>Starry Firefly</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/StarryFirefly</normaloff>:/Bugs/StarryFirefly</iconset>
             </property>
             <property name="iconSize">
@@ -2436,7 +2436,7 @@
              <string>Woodland Rhino Beetle</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/WoodlandRhinoBeetle</normaloff>:/Bugs/WoodlandRhinoBeetle</iconset>
             </property>
             <property name="iconSize">
@@ -2456,7 +2456,7 @@
              <string>Volcanic Ladybug</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/VolcanicLadyBug</normaloff>:/Bugs/VolcanicLadyBug</iconset>
             </property>
             <property name="iconSize">
@@ -2476,7 +2476,7 @@
              <string>Sand Cicada</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/SandCicada</normaloff>:/Bugs/SandCicada</iconset>
             </property>
             <property name="iconSize">
@@ -2496,7 +2496,7 @@
              <string>Sky Stag Beetle</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/SkyStagBeetle</normaloff>:/Bugs/SkyStagBeetle</iconset>
             </property>
             <property name="iconSize">
@@ -2519,7 +2519,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/FaronGrasshopper</normaloff>:/Bugs/FaronGrasshopper</iconset>
             </property>
             <property name="iconSize">
@@ -2539,7 +2539,7 @@
              <string>Skyloft Mantis</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/LoftMantis</normaloff>:/Bugs/LoftMantis</iconset>
             </property>
             <property name="iconSize">
@@ -2559,7 +2559,7 @@
              <string>Lanayru Ant</string>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/LanayruAnt</normaloff>:/Bugs/LanayruAnt</iconset>
             </property>
             <property name="iconSize">
@@ -2582,7 +2582,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/resources.qrc">
+             <iconset resource="../resources/skyward_sword_resources.qrc">
               <normaloff>:/Bugs/EldinRoller</normaloff>:/Bugs/EldinRoller</iconset>
             </property>
             <property name="iconSize">
@@ -3115,7 +3115,7 @@
   <tabstop>gratitudeCrystalsSpinBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="../resources/skyward_sword_resources.qrc"/>
  </resources>
  <connections>
   <connection>
